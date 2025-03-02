@@ -1,0 +1,19 @@
+Stay in light
+
+Add sprite animations
+	-Replace the rectangle for a sprite object
+	-Add animations
+->
+Adjust player movement:
+	-Make the player move horizontally
+	-Adjust movement speed
+->
+Create a level in LTDk
+	-Create a backround level
+	-Create object entities
+	-Create enemy entities 
+->
+Load the level in the game project
+	-Create seperate Level Class
+	-Parse all the LTDK values 
+	-Make it render on screen 

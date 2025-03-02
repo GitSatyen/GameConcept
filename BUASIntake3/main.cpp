@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include "Player.h"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Collide");
-    sf::RectangleShape rectangle(sf::Vector2f(200, 100)); // Width: 200, Height: 100 
-    rectangle.setFillColor(sf::Color::Green);
-    rectangle.setPosition(300, 250);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Stay in the light");
+    Player player;
+    sf::Clock clock;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -13,8 +13,12 @@ int main() {
                 window.close();
         }
 
+        float deltaTime = clock.restart().asSeconds();
+
         window.clear(sf::Color::Black);
-        window.draw(rectangle);
+
+        player.update(deltaTime);
+        player.draw(window);
         window.display();   
     }
 
