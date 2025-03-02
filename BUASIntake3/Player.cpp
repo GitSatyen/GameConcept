@@ -17,30 +17,35 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
+	player.move(velocity * deltaTime);
 	Movement(deltaTime);
 }
 
 void Player::Movement(float deltaTime)
 {
 	velocity = sf::Vector2f(0.0f, 0.0f);
-	player.move(velocity * deltaTime);
+	
 	/*If the horizontal movement (left/right) is pressed and then the vertical movement button (up/down)
 	gets pressed the character should be moving diagonally and vice versa */
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		player.move(-0.1, 0);
+		velocity.x = -speed;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		player.move(0.1, 0);
+		velocity.x = speed;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		player.move(0, -0.1);
+		velocity.y = -speed;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		player.move(0, 0.1);
+		velocity.y = speed;
+	}
+
+	if (velocity.x != 0.0f && velocity.y != 0.0f) {
+		velocity *= 0.7071f; // Normalize to maintain consistent speed diagonally
 	}
 }
