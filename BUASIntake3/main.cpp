@@ -2,7 +2,7 @@
 #include "Player.h"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Stay in the light");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");
     Player player;
     sf::Clock clock;
 
