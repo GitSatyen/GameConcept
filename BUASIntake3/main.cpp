@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include <stdio.h>
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");
@@ -16,7 +17,6 @@ int main() {
         float deltaTime = clock.restart().asSeconds();
 
         window.clear(sf::Color::Black);
-
         player.update(deltaTime);
         player.draw(window);
         window.display();   

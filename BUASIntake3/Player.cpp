@@ -14,6 +14,9 @@ std::map <Player::State, std::string> stateMap = {
 
 Player::Player()
 {
+	sourceImage = sf::Vector2i(0, 0);
+	frameTime = 0.0f;
+	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
 	if (!IdleAnim.loadFromFile("Assets/Player/Idle.png")) {
@@ -24,23 +27,14 @@ Player::Player()
 		printf("Sprite Found");
 		//Place texture in sprite object
 		sprite.setTexture(IdleAnim);
-
-		//Animate sprite by frame
-		sourceImage.x++;
-		if (sourceImage.x * 64 >= IdleAnim.getSize().x){
-			sourceImage.x = 0;
-		};
-		//Draw first frame of the spritesheet
-		//sprite.setTextureRect(sf::IntRect(sourceImage.x * 64, sourceImage.y * 128, 128, 128));
+	}
+		//Set first frame of the animation
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
 		//Set sprite position
 		sprite.setPosition(100, 250);
-	}
-
 	
-	velocity = sf::Vector2f(0.0f, 0.0f);
 	//Set Idle as default State
 	setState(State::Idle);
-
 }
 
 void Player::setState(State newState)
@@ -87,6 +81,18 @@ void Player::update(float deltaTime)
 	//player.move(velocity * deltaTime);
 	Movement(deltaTime);
 
+	//Animate player sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		sourceImage.x++;
+		// Check sprite sheet width
+		if (sourceImage.x * 128 >= IdleAnim.getSize().x) { 
+			sourceImage.x = 0;
+		}
+		//Draw first frame of the spritesheet
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		frameTime = 0.0f;
+	}
 }
 
 void Player::Movement(float deltaTime)

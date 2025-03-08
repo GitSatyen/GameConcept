@@ -1,19 +1,37 @@
-Stay in light
+TO DO
 
-Add sprite animations
-	-Replace the rectangle for a sprite object
-	-Add animations
-->
-Adjust player movement:
-	-Make the player move horizontally
-	-Adjust movement speed
-->
-Create a level in LTDk
+Create a level in LTDk:
 	-Create a backround level
+	-Create the tiles
 	-Create object entities
 	-Create enemy entities 
 ->
-Load the level in the game project
+Load the level in the game project:
 	-Create seperate Level Class
 	-Parse all the LTDK values 
 	-Make it render on screen 
+->
+Adjust player movement:
+	-Make the player move across the screen
+	-Make the player move across the level
+->
+Add player sprite animations:
+	-Add all player movement animations
+->
+Place the princess at the end of the level:
+	-Make the princess spawn in the level
+	-Animate the princess
+	-Player wins when reaching the princess
+->Add Winning game functionallity:
+	-Displays image on telling player did good (At the final show win screen)
+	-Clear the image and display the next level
+->
+Create dead functionallity player:
+	-Let the player die after the step counter reaches 0
+	-Let the animation play
+	-Restart the level
+-> Add pause to menu to quit or restart
+-> Add restart while playing:
+	-Make the level restart when player presses R
+	-Display text underneath the level to restart with R
+	
