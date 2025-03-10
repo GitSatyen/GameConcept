@@ -389,7 +389,7 @@
 	], "enums": [{ "identifier": "Enum", "uid": 3, "values": [], "iconTilesetUid": null, "externalRelPath": null, "externalFileChecksum": null, "tags": [] }], "externalEnums": [], "levelFields": [] },
 	"levels": [
 		{
-			"identifier": "Level_0",
+			"identifier": "Level1",
 			"iid": "c0c2ecf0-e920-11ef-869b-53af2e250f41",
 			"uid": 0,
 			"worldX": 0,
@@ -399,7 +399,7 @@
 			"pxHei": 336,
 			"__bgColor": "#696A79",
 			"bgColor": null,
-			"useAutoIdentifier": true,
+			"useAutoIdentifier": false,
 			"bgRelPath": null,
 			"bgPos": null,
 			"bgPivotX": 0.5,
