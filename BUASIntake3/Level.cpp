@@ -1,44 +1,38 @@
 #include "Level.h"
-#include "LDtkLoader/Project.hpp"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include "Player.h"
 #include <string>
 #include <fstream>
 
-Level::Level()
-{
-	//ldtk::Project
-}
-
-void Level::loadFile(const std::string& filepath)
+Level::Level(const std::string& filepath) : 
+	project(), 
+	world(project.getWorld("World")),
+	level(world.getLevel("Level1"))
 {
 	//Load LDtk project file
-	project.loadFromFile("Assets/BG/Levels.ldtk");
-
-	//Get world and level from project
-	const auto& world = project.getWorld("World");
-	const auto& level = world.getLevel("Level1");
-
-	//Parse all layers
-	const auto& bg_layer = level.getLayer("BG"); //Background layer
-	for (const auto& tile : bg_layer.allTiles()) {
-		// Access tile properties: position, texture coordinates, etc.
-		int x = tile.getGridPosition().x; // Grid-based X position
-		int y = tile.getGridPosition().y; // Grid-based Y position
-		int tile_id = tile.tileId; // ID in the tileset
+	try {
+		project.loadFromFile(filepath);
 	}
+	catch (const std::exception& e) {
+		std::cerr << "Failed to load LDtk file: " << e.what() << "\n";
+		return;
+	}
+
+	//Load tileset
+	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {
+		printf("Failed to load tileset texture");
+	}
+	tile_sprite.setTexture(tileset_texture);
 }
+
 
 void Level::draw(sf::RenderTarget& image)
 {
-	tile_sprite.setTexture(tileset_texture);
-	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {
-		printf("No tileset found");
-	}
-
 	int tile_size = 16;
-	for (const auto& tile : level.getLayer("BG").allTiles()) {
+	//Parse background layer
+	const auto& bg_layer = level.getLayer("BG");
+	for (const auto& tile : bg_layer.allTiles()) {
 		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size;
 		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size;
 		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
