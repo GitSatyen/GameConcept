@@ -98,12 +98,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>inc\LDtkLoader-1.5.2\include;SFML\SFML-2.6.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>inc\LDtkLoader-1.5.2\include;SFML\SFML-2.6.2\include;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -132,12 +132,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>inc\LDtkLoader-1.5.2\include;SFML\SFML-2.6.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>inc\LDtkLoader-1.5.2\include;SFML\SFML-2.6.2\include;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

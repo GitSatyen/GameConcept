@@ -140,11 +140,27 @@ auto Project::getWorld() const -> const World& {
 }
 
 auto Project::getWorld(const std::string& name) const -> const World& {
+    std::cout << "Number of worlds: " << m_worlds.size() << std::endl;
+
     for (const auto& world : m_worlds)
         if (world.getName() == name)
             return world;
     ldtk_error("World name \""+name+"\" not found in Project \""+getFilePath().c_str()+"\".");
+
+    if (getFilePath().empty()) {
+        std::cerr << "Error: Project file path is empty!" << std::endl;
+    }
+
 }
+
+const World* Project::getWorld(const std::string& name) const {
+    for (const auto& world : m_worlds) {
+        if (world.getName() == name) return &world;
+    }
+    std::cerr << "World name \"" << name << "\" not found in project.\n";
+    return nullptr; // Or use std::optional<World>
+}
+
 
 auto Project::getWorld(const IID& iid) const -> const World& {
     for (const auto& world : m_worlds)

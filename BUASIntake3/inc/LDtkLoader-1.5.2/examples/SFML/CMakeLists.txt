@@ -12,6 +12,8 @@ add_executable(LDtkSFML main.cpp)
 target_include_directories(LDtkSFML PRIVATE ../../include)
 target_link_libraries(LDtkSFML PRIVATE LDtkLoader sfml-graphics)
 set_target_properties(LDtkSFML PROPERTIES RUNTIME_OUTPUT_DIRECTORY bin)
+find_package(nlohmann_json CONFIG REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 get_target_property(BIN_DIR LDtkSFML RUNTIME_OUTPUT_DIRECTORY)
 file(COPY assets DESTINATION ${BIN_DIR})

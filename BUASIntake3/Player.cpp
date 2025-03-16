@@ -24,7 +24,7 @@ Player::Player()
 	}
 
 	else {
-		printf("Sprite Found");
+		printf("Sprite Found\n");
 		//Place texture in sprite object
 		sprite.setTexture(IdleAnim);
 	}

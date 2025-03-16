@@ -6,6 +6,7 @@ class Level
 {
 public:
 
+	ldtk::Project loadProject(const std::string& filepath);
 	Level(const std::string& filepath);
 	void draw(sf::RenderTarget& image);
 
