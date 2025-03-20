@@ -1,0 +1,79 @@
+{
+    "__header__": {
+        "fileType": "LDtk Project JSON",
+        "app": "LDtk",
+        "doc": "https://ldtk.io/json"
+    },
+    "iid": "minimal-uuid",
+    "jsonVersion": "1.5.3",
+    "defaultGridSize": 16,
+    "defaultPivotX": 0.0,
+    "defaultPivotY": 0.0,
+    "backupLimit": 0,
+    "exportPrefs": {},
+    "worldLayout": "Free",
+    "worlds": [
+        {
+            "identifier": "MyWorld",
+            "iid": "world-uuid",
+            "uid": 1,
+            "worldGridWidth": 64,
+            "worldGridHeight": 64,
+            "defaultLevelHeight": 64,
+            "defaultLevelWidth": 64,
+            "levels": [
+                {
+                    "identifier": "Level1",
+                    "iid": "level-uuid",
+                    "uid": 2,
+                    "pxWid": 64,
+                    "pxHei": 64,
+                    "worldX": 0,
+                    "worldY": 0,
+                    "layerInstances": [
+                        {
+                            "__identifier": "AutoLayer",
+                            "__type": "AutoLayer",
+                            "iid": "layer-uuid",
+                            "layerDefUid": 0,
+                            "levelId": 2,
+                            "autoTiles": [],
+                            "gridTiles": [],
+                            "entityInstances": [],
+                            "__gridSize": 16,
+                            "__opacity": 1.0,
+                            "__pxTotalOffsetX": 0,
+                            "__pxTotalOffsetY": 0,
+                            "visible": true
+                        }
+                    ],
+                    "fieldInstances": []
+                }
+            ]
+        }
+    ],
+    "defs": {
+        "entities": [],
+        "tilesets": [],
+        "enums": [],
+        "externalEnums": [],
+        "levelFields": [],
+        "layers": [
+            {
+                "identifier": "AutoLayer",
+                "type": "AutoLayer",
+                "uid": 0,
+                "gridSize": 16,
+                "__cWid": 4,
+                "__cHei": 4,
+                "displayOpacity": 1.0,
+                "parallaxFactorX": 1.0,
+                "parallaxFactorY": 1.0,
+                "visible": true,
+                "intGridValues": [],
+                "pxOffsetX": 0,
+                "pxOffsetY": 0
+            }
+        ]
+    }
+}

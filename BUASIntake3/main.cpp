@@ -3,32 +3,52 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Level.h"
-//#include <nlohmann/json.hpp>
+#include <filesystem>
 
+void verifyFile(const std::string& filepath) {
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        std::cerr << "File does not exist or cannot be opened: " << filepath << "\n";
+        throw std::runtime_error("File verification failed");
+    }
+    std::cout << "File verified: " << filepath << "\n";
+    file.close();
+}
 
+std::string readFile(const std::string& filepath)
+{
+    std::ifstream file(filepath);
+    if (!file.is_open()) {
+        throw std::runtime_error("Cannot open file: " + filepath);
+    }
+    std::string content((std::istreambuf_iterator<char>(file)),
+        std::istreambuf_iterator<char>());
+    file.close();
+    return content;
+}
 
-//void testJsonLoad(const std::string& filepath) {  
-//  try {  
-//      std::ifstream file(filepath, std::ios::in); // Correct initialization of ifstream  
-//      if (!file.is_open()) {  
-//          std::cerr << "Failed to open file: " << filepath << "\n";  
-//          return;  
-//      }  
-//
-//      using json = nlohmann::json; // Initialize jsonData to avoid uninitialized local variable error
-//      json jsonData = json::object();  
-//      std::cout << "JSON loaded successfully.\n";  
-//  }  
-//  catch (const std::exception& e) {  
-//      std::cerr << "Error loading JSON: " << e.what() << "\n";  
-//  }  
-//}  
 
 int main() {  
   sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");  
   Player player;  
-  Level level("Assets/BG/Levelsmin.ldtk");  
+  Level level("Assets/BG/Levels.ldtk");
   sf::Clock clock;  
+
+ /* try {
+      std::ifstream file("Assets/BG/Levelsmin.ldtk");
+      if (!file.is_open()) {
+          throw std::runtime_error("Cannot open file: Assets/BG/Levelsmin.ldtk");
+      }
+      file.close();
+      std::cout << "File verified: Assets/BG/Levelsmin.ldtk\n";
+
+      Level level("Assets/BG/Levelsmin.ldtk");
+      std::cout << "Level loaded successfully.\n";
+  }
+  catch (const std::exception& e) {
+      std::cerr << "Exception: " << e.what() << "\n";
+      return 1;
+  }*/
 
   while (window.isOpen()) {  
       sf::Event event;  
