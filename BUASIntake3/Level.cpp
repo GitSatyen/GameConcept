@@ -2,59 +2,45 @@
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include "Player.h"
+#include <filesystem>
+#include <iostream>
 #include <string>
 #include <fstream>
 
 ldtk::Project Level::loadProject(const std::string& filepath)
 {
-	ldtk::Project project;
-	//Load LDtk project file
+	std::ifstream file(filepath);
+	if (!file.is_open()) {
+		throw std::runtime_error("Cannot open file: " + filepath);
+	}
+	// Read the file content
+	std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	file.close();
+	std::cout << "File content:\n" << content << "\n";
+
+	// Load the ldtk::Project
+	ldtk::Project proj;
 	try {
-		project.loadFromFile(filepath);
-		// Print all world names
-		const auto& worlds = project.allWorlds();
-		std::cout << "Number of worlds: " << worlds.size() << "\n";
-		for (const auto& w : worlds) {
-			std::cout << "World: " << w.getName() << "\n";
-			for (const auto& l : w.allLevels()) {
-				std::cout << "  Level: " << l.name << "\n";
-			}
-		}
+		std::cout << "Attempting to load project...\n";
+		proj.loadFromFile(filepath);
+		std::cout << "Project loaded successfully.\n";
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Failed to load LDtk file: " << e.what() << "\n";
+		throw;
 	}
-	return project;
+	return proj;
 }
 
-Level::Level(const std::string& filepath) :project(loadProject(filepath)) {
-	//world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
-	//level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0])
-	
 
-	auto worlds = project.allWorlds();
-	if (worlds.empty()) {
-		throw std::runtime_error("No world found in LDtk project");
-	}
-	world = worlds[0];
-	printf("World accessed:", world.getName());
+Level::Level(const std::string& filepath) :
+	project(loadProject(filepath)),
+	world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
+	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0])
+{
 
-	std::cout << "Accessing levels...\n";
-	auto levels = world.allLevels();
-	if (levels.empty()) {
-		throw std::runtime_error("No levels found in world");
-	}
-	level = levels[0];
-	printf("Level accessed", level.getName());
-
-	//Load LDtk project file
-	try {
-		project.loadFromFile(filepath);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Failed to load LDtk file: " << e.what() << "\n";
-		return;
-	}
+	std::cout << "World name: " << world.getName() << "\n";
+	std::cout << "Level name: " << level.name << ", ID: " << level.iid << "\n";
 
 	//Load tileset
 	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {

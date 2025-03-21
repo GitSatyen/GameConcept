@@ -27,7 +27,7 @@
 int main() {  
   sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");  
   Player player;  
-  Level level("Assets/BG/Levelsmin.ldtk");  
+  Level level("Assets/BG/Levels.ldtk");  
   sf::Clock clock;  
 
   while (window.isOpen()) {  
