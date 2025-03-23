@@ -1,15 +1,13 @@
 TO DO
+TODAY
+DRAW RECTANGLES IN A SEPERATE FUNCTION AND MOVE IT TO LEVEL DRAW
+FIX PLAYER SPAWN ISSUE
 
 Create a level in LTDk:
 	-Create a backround level
 	-Create the tiles
 	-Create object entities
 	-Create enemy entities 
-->
-Load the level in the game project:
-	-Create seperate Level Class
-	-Parse all the LTDK values 
-	-Make it render on screen 
 ->
 Adjust player movement:
 	-Make the player move across the screen

@@ -47,6 +47,20 @@ Level::Level(const std::string& filepath) :
 		printf("Failed to load tileset texture");
 	}
 	tile_sprite.setTexture(tileset_texture);
+}
+
+void Level::draw(sf::RenderTarget& image)
+{
+	int tile_size = 16;
+	//Parse background layer
+	const auto& bg_layer = level.getLayer("BG");
+	for (const auto& tile : bg_layer.allTiles()) {
+		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size;
+		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size;
+		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
+		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size);
+		image.draw(tile_sprite);
+	}
 
 	//Acces enitity properties
 	// Iterate through layers in the level
@@ -65,22 +79,27 @@ Level::Level(const std::string& filepath) :
 				for (const auto& field : entity.allFields()) {
 					printf("Field ", field.name, "= ", field.type);
 				}
+
+				sf::Vector2f position = sf::Vector2f(
+					static_cast<float>(entity.getPosition().x),
+					static_cast<float>(entity.getPosition().y)
+				);
+
+				sf::Vector2f size = sf::Vector2f(
+					static_cast<float>(entity.getSize().x),
+					static_cast<float>(entity.getSize().y)
+				);
+				// Create a rectangle shape for the entity's bounding box
+				sf::RectangleShape rect(size);
+				rect.setPosition(position);
+#ifndef NDEBUG  //ONLY WHILE DEBUGGING 
+				// Set the rectangle's outline to red
+				rect.setFillColor(sf::Color::Transparent); // No fill
+				rect.setOutlineColor(sf::Color::Red);      // Red outline
+				rect.setOutlineThickness(2.0f);           // 2px border thickness
+				image.draw(rect);						  // Draw the rectangle	
+#endif			//ONLY WHILE DEBUGGING 
 			}
 		}
-	}
-}
-
-
-void Level::draw(sf::RenderTarget& image)
-{
-	int tile_size = 16;
-	//Parse background layer
-	const auto& bg_layer = level.getLayer("BG");
-	for (const auto& tile : bg_layer.allTiles()) {
-		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size;
-		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size;
-		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
-		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size);
-		image.draw(tile_sprite);
 	}
 }
