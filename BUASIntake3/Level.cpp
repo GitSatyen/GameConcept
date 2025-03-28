@@ -18,7 +18,7 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 	file.close();
 	std::cout << "File content:\n" << content << "\n";
 
-	// Load the ldtk::Project
+	// Load the ldtk Project
 	ldtk::Project proj;
 	try {
 		std::cout << "Attempting to load project...\n";
@@ -29,6 +29,12 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 		std::cerr << "Failed to load LDtk file: " << e.what() << "\n";
 		throw;
 	}
+
+	//Entitie layer
+	const auto& entities = level.getLayer("Entities");
+	const auto& startPos = entities.getEntitiesByName("Start")[0].get();
+	//playerStart = { startPos.getPosition().x, startPos.getPosition().y };
+
 	return proj;
 }
 

@@ -27,16 +27,7 @@ Enemy::Enemy()
 		sprite.setTexture(IdleAnim);
 		sprite.setTextureRect(sf::IntRect(0, 0, 68, 64));
 	}
-	//Set first frame of the animation
-	//sprite.setTextureRect(sf::IntRect(
-	//	sourceImage.x * 58, // New frame width (290/5 = 58) 
-	//	sourceImage.y * 86, // Full height (Single row) 
-	//	58,					// Frame width
-	//	86));				// Frame height
-	// For testing
 	
-	//IdleAnim.setRepeated(false);
-	//IdleAnim.setSmooth(false);
 	//Set sprite position
 	sprite.setPosition(200, 250);
 	sprite.setScale(1.2f, 1.2f);
@@ -77,11 +68,11 @@ void Enemy::update(float deltaTime)
 	//Animate sprite frame by frame
 	frameTime += deltaTime;
 	if (frameTime >= 0.2f) {
-		sourceImage.x = (sourceImage.x + 1) % totalFrames; // Cleaner loop
+		sourceImage.x = (sourceImage.x + 1) % totalFrames;
 		sprite.setTextureRect(sf::IntRect(
 		sourceImage.x * frameWidth,	0, frameWidth,64));
 #ifndef NDEBUG
-		printf("Current Frame: %d\n", sourceImage.x);
+		printf("Current Frame (Enemy): %d\n", sourceImage.x);
 #endif
 		frameTime = 0.0f;
 	}
