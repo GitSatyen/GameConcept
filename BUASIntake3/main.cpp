@@ -3,9 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Level.h"
-//#include <nlohmann/json.hpp>
-
-
+#include "Enemy.h"
 
 //void testJsonLoad(const std::string& filepath) {  
 //  try {  
@@ -27,6 +25,7 @@
 int main() {  
   sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");  
   Player player;  
+  Enemy enemy;
   Level level("Assets/BG/Levels.ldtk");  
   sf::Clock clock;  
 
@@ -41,8 +40,12 @@ int main() {
 
       window.clear(sf::Color::Black);  
       level.draw(window);  
+      
       player.update(deltaTime);  
       player.draw(window);  
+      enemy.update(deltaTime);
+      enemy.draw(window);
+      
       window.display();  
   }  
 

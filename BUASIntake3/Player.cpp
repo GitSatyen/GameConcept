@@ -78,7 +78,6 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
-	//player.move(velocity * deltaTime);
 	Movement(deltaTime);
 
 	//Animate player sprite frame by frame

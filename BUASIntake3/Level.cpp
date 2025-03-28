@@ -47,6 +47,25 @@ Level::Level(const std::string& filepath) :
 		printf("Failed to load tileset texture");
 	}
 	tile_sprite.setTexture(tileset_texture);
+
+
+	for (const auto& layer : level.allLayers()) {
+		// Check if the layer is an entity layer
+		if (layer.getType() == ldtk::LayerType::Entities) {
+			const auto& entityLayer = layer.allEntities();
+			for (const auto& entity : entityLayer) {
+				// Access entity properties
+				std::cout << "Entity ID: " << entity.iid << std::endl;
+				std::cout << "Entity name: " << entity.getName() << std::endl;
+				std::cout << "Position: (" << entity.getPosition().x << ", " << entity.getPosition().y << ")" << std::endl;
+				std::cout << "Size: (" << entity.getSize().x << ", " << entity.getSize().y << ")" << std::endl;
+
+				for (const auto& field : entity.allFields()) {
+					printf("Field ", field.name, "= ", field.type);
+				}
+			}
+		}
+	}
 }
 
 void Level::draw(sf::RenderTarget& image)
@@ -70,16 +89,6 @@ void Level::draw(sf::RenderTarget& image)
 			const auto& entityLayer = layer.allEntities();
 
 			for (const auto& entity : entityLayer) {
-				// Access entity properties
-				std::cout << "Entity ID: " << entity.iid << std::endl;
-				std::cout << "Entity name: " << entity.getName() << std::endl;
-				std::cout << "Position: (" << entity.getPosition().x << ", " << entity.getPosition().y << ")" << std::endl;
-				std::cout << "Size: (" << entity.getSize().x << ", " << entity.getSize().y << ")" << std::endl;
-
-				for (const auto& field : entity.allFields()) {
-					printf("Field ", field.name, "= ", field.type);
-				}
-
 				sf::Vector2f position = sf::Vector2f(
 					static_cast<float>(entity.getPosition().x),
 					static_cast<float>(entity.getPosition().y)
