@@ -39,6 +39,7 @@ Enemy::Enemy()
 	//IdleAnim.setSmooth(false);
 	//Set sprite position
 	sprite.setPosition(200, 250);
+	sprite.setScale(1.2f, 1.2f);
 
 	IdleAnim.setSmooth(false);
 	//Set Idle as default State
@@ -79,7 +80,9 @@ void Enemy::update(float deltaTime)
 		sourceImage.x = (sourceImage.x + 1) % totalFrames; // Cleaner loop
 		sprite.setTextureRect(sf::IntRect(
 		sourceImage.x * frameWidth,	0, frameWidth,64));
+#ifndef NDEBUG
 		printf("Current Frame: %d\n", sourceImage.x);
+#endif
 		frameTime = 0.0f;
 	}
 }
