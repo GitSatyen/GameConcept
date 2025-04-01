@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <set>
+
 
 ldtk::Project Level::loadProject(const std::string& filepath)
 {
@@ -31,8 +33,8 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 	}
 
 	//Entitie layer
-	const auto& entities = level.getLayer("Entities");
-	const auto& startPos = entities.getEntitiesByName("Start")[0].get();
+	//const auto& entities = level.getLayer("Entities");
+	//const auto& startPos = entities.getEntitiesByName("Start")[0].get();
 	//playerStart = { startPos.getPosition().x, startPos.getPosition().y };
 
 	return proj;
@@ -79,12 +81,43 @@ void Level::draw(sf::RenderTarget& image)
 	int tile_size = 16;
 	//Parse background layer
 	const auto& bg_layer = level.getLayer("BG");
+
+	//Keep track of grid positions where we've already drawn a dot
+	std::set<std::pair<int, int>> drawn_positions;
+	
 	for (const auto& tile : bg_layer.allTiles()) {
+		// Get the grid position of the tile
+		int grid_x = tile.getGridPosition().x;
+		int grid_y = tile.getGridPosition().y;
+
 		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size;
 		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size;
 		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
 		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size);
 		image.draw(tile_sprite);
+
+		//Grok solution
+		// Check if we've already drawn a dot at this position
+		std::pair<int, int> pos = { grid_x, grid_y };
+		if (drawn_positions.find(pos) != drawn_positions.end()) {
+			continue; // Skip if we've already drawn a dot here
+		}
+
+		// Mark this position as drawn
+		drawn_positions.insert(pos);
+
+		//Calculate the center of the tile in pixel coordinates
+		float center_x = tile.getGridPosition().x * tile_size + tile_size / 2.0f;
+		float center_y = tile.getGridPosition().y * tile_size + tile_size / 2.0f;
+
+		sf::CircleShape circle;
+		circle.setRadius(2.0f); // Smaller radius for visibility (adjust as needed)
+		circle.setOutlineColor(sf::Color::Yellow); 
+		// Set position to the center
+		circle.setPosition(center_x - 2.0f, center_y - 2.0f);
+#ifndef NDEBUG
+		image.draw(circle);
+#endif
 	}
 
 	//Acces enitity properties
@@ -111,8 +144,8 @@ void Level::draw(sf::RenderTarget& image)
 				// Set the rectangle's outline to red
 				rect.setFillColor(sf::Color::Transparent); // No fill
 				rect.setOutlineColor(sf::Color::Red);      // Red outline
-				rect.setOutlineThickness(2.0f);           // 2px border thickness
-				image.draw(rect);						  // Draw the rectangle	
+				rect.setOutlineThickness(2.0f);            // 2px border thickness
+				image.draw(rect);						   // Draw the rectangle	
 #endif			//ONLY WHILE DEBUGGING 
 			}
 		}

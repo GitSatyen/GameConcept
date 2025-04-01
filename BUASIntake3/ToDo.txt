@@ -3,12 +3,6 @@ TODAY
 DRAW RECTANGLES IN A SEPERATE FUNCTION AND MOVE IT TO LEVEL DRAW
 FIX PLAYER SPAWN ISSUE
 
-Create a level in LTDk:
-	-Create a backround level
-	-Create the tiles
-	-Create object entities
-	-Create enemy entities 
-->
 Adjust player movement:
 	-Make the player move across the screen
 	-Make the player move across the level
