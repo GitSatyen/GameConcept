@@ -78,7 +78,25 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
-	Movement(deltaTime);
+	//Player movement
+	if (isMoving) {
+		//Move towards the target position
+		sf::Vector2f direction = targetPosition - sprite.getPosition();
+		float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+	
+		if (distance < 5.0f) { // Close enough to snap to position
+			sprite.setPosition(targetPosition);
+			isMoving = false;
+		}
+		else {
+			// Normalize the direction and move
+			if (distance > 0) {
+				direction.x /= distance;
+				direction.y /= distance;
+			}
+			sprite.move(direction * speed * deltaTime);
+		}
+	}
 
 	//Animate player sprite frame by frame
 	frameTime += deltaTime;
@@ -96,30 +114,34 @@ void Player::update(float deltaTime)
 
 void Player::Movement(float deltaTime)
 {
-	velocity = sf::Vector2f(0.0f, 0.0f);
-	
-	/*If the horizontal movement (left/right) is pressed and then the vertical movement button (up/down)
-	gets pressed the character should be moving diagonally and vice versa */
+	if(isMoving) return; // Don't process new movement while already moving
+
+	sf::Vector2i newGridPosition = gridPosition;
+	bool moved = false;
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		velocity.x = -speed;
+		newGridPosition.x--;
+		moved = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		velocity.x = speed;
+		newGridPosition.x++;
+		moved = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		velocity.y = -speed;
+		newGridPosition.y--;
+		moved = true;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		velocity.y = speed;
+		newGridPosition.y++;
+		moved = true;
 	}
 
-	if (velocity.x != 0.0f && velocity.y != 0.0f) {
-		velocity *= 0.7071f; // Normalize to maintain consistent speed diagonally
+	if (moved) {
+		moveToGridPosition(newGridPosition.x, newGridPosition.y); // Normalize to maintain consistent speed diagonally
 	}
 }
 
@@ -147,4 +169,32 @@ void Player::doAnime(float deltaTime)
 		doDead(deltaTime);
 		break;
 	}*/
+}
+
+void Player::setGridPosition(int x, int y)
+{
+	gridPosition.x = x;
+	gridPosition.y = y;
+
+	//Calculate center position
+	targetPosition.x = x * tileSize + tileSize / 2.0f - sprite.getLocalBounds().width / 2.0f;
+	targetPosition.y = y * tileSize + tileSize / 2.0f - sprite.getLocalBounds().height / 2.0f;
+	sprite.setPosition(targetPosition);
+}
+
+void Player::moveToGridPosition(int x, int y)
+{
+	if (!isMoving) {
+		gridPosition.x = x;
+		gridPosition.y = y;
+		// Calculate the center position of the target tile
+		targetPosition.x = x * tileSize + tileSize / 2.0f - sprite.getLocalBounds().width / 2.0f;
+		targetPosition.y = y * tileSize + tileSize / 2.0f - sprite.getLocalBounds().height / 2.0f;
+		isMoving = true;
+	}
+}
+
+sf::Vector2i Player::getGridPosition() const
+{
+	return gridPosition;
 }

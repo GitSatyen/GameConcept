@@ -3,6 +3,10 @@ TODAY
 DRAW RECTANGLES IN A SEPERATE FUNCTION AND MOVE IT TO LEVEL DRAW
 FIX PLAYER SPAWN ISSUE
 
+Enlarge the level:
+	->Make the level fit across th whole screen
+	->Make the assets scale with the map
+
 Adjust player movement:
 	-Make the player move across the screen
 	-Make the player move across the level

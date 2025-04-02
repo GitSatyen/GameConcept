@@ -31,6 +31,9 @@ public:
 	void update(float deltaTime);
 	void Movement(float deltaTime);
 	void doAnime(float deltaTime);
+	void setGridPosition(int x, int y);
+	void moveToGridPosition(int x, int y);
+	sf::Vector2i getGridPosition() const;
 
 private:
 	State state = State::None;
@@ -46,10 +49,13 @@ private:
 
 	sf::Vector2i sourceImage;
 	sf::Clock clock;
-	int hp = 4;
+	sf::Vector2i gridPosition;
+	sf::Vector2f targetPosition;
 	sf::Vector2f velocity;
+	bool isMoving = false;
+	const int tileSize = 16;
+	int hp = 4;
 	float frameTime;
 	float speed = 100.0f;
 	//sf::RectangleShape player;
 };
-

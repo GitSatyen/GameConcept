@@ -40,6 +40,28 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 	return proj;
 }
 
+sf::Vector2i Level::getStartPosition() const
+{
+	try {
+		const auto& entities = level.getLayer("Objects");
+		const auto& startEntities = entities.getEntitiesByName("Start");
+
+		if (!startEntities.empty()) {
+			const auto& startPos = startEntities[0].get();
+			return sf::Vector2i(
+				startPos.getPosition().x / 16, //16x16 tiles
+				startPos.getPosition().y / 16
+			);
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Couldnt find startEntity" << e.what() << "\n";
+		throw;
+	}
+
+	return sf::Vector2i(5, 5);
+}
+
 
 Level::Level(const std::string& filepath) :
 	project(loadProject(filepath)),

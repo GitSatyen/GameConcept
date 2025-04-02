@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Enemy.h"
+#include "LDtkLoader/Project.hpp"
 
 //void testJsonLoad(const std::string& filepath) {  
 //  try {  
@@ -28,6 +29,9 @@ int main() {
   Enemy enemy;
   Level level("Assets/BG/Levels.ldtk");  
   sf::Clock clock;  
+
+  sf::Vector2i startPos = level.getStartPosition();
+  player.setGridPosition(startPos.x, startPos.y);
 
   while (window.isOpen()) {  
       sf::Event event;  

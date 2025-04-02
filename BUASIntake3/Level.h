@@ -7,6 +7,7 @@ class Level
 public:
 
 	ldtk::Project loadProject(const std::string& filepath);
+	sf::Vector2i getStartPosition() const;
 	Level(const std::string& filepath);
 	void draw(sf::RenderTarget& image);
 
