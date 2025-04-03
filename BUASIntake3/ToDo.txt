@@ -3,6 +3,8 @@ TODAY
 DRAW RECTANGLES IN A SEPERATE FUNCTION AND MOVE IT TO LEVEL DRAW
 FIX PLAYER SPAWN ISSUE
 
+TODO 4-4: Make the player and other enitties fit in the grid
+
 Enlarge the level:
 	->Make the level fit across th whole screen
 	->Make the assets scale with the map

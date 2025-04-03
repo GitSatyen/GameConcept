@@ -72,7 +72,7 @@ void Enemy::update(float deltaTime)
 		sprite.setTextureRect(sf::IntRect(
 		sourceImage.x * frameWidth,	0, frameWidth,64));
 #ifndef NDEBUG
-		printf("Current Frame (Enemy): %d\n", sourceImage.x);
+		//printf("Current Frame (Enemy): %d\n", sourceImage.x);
 #endif
 		frameTime = 0.0f;
 	}

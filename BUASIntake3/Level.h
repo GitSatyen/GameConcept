@@ -7,9 +7,14 @@ class Level
 public:
 
 	ldtk::Project loadProject(const std::string& filepath);
-	sf::Vector2i getStartPosition() const;
-	Level(const std::string& filepath);
+	sf::Vector2f getStartPosition() const;
+	Level(const std::string& filepath, sf::RenderWindow& window);
 	void draw(sf::RenderTarget& image);
+	void Resize(sf::RenderWindow& window);
+	const sf::View& getGameView() const { return gameView; }
+
+	const ldtk::Level& getLevel() const { return level; }
+	const ldtk::World& getWorld() const { return world; }
 
 private:
 	ldtk::Project project;
@@ -18,6 +23,7 @@ private:
 
 	sf::Sprite tile_sprite;
 	sf::Texture tileset_texture;
+	sf::View gameView;
+	float zoomFactor = 1.0f;
+	float baseWidth, baseHeight;
 };
-
-	

@@ -6,52 +6,62 @@
 #include "Enemy.h"
 #include "LDtkLoader/Project.hpp"
 
-//void testJsonLoad(const std::string& filepath) {  
-//  try {  
-//      std::ifstream file(filepath, std::ios::in); // Correct initialization of ifstream  
-//      if (!file.is_open()) {  
-//          std::cerr << "Failed to open file: " << filepath << "\n";  
-//          return;  
-//      }  
-//
-//      using json = nlohmann::json; // Initialize jsonData to avoid uninitialized local variable error
-//      json jsonData = json::object();  
-//      std::cout << "JSON loaded successfully.\n";  
-//  }  
-//  catch (const std::exception& e) {  
-//      std::cerr << "Error loading JSON: " << e.what() << "\n";  
-//  }  
-//}  
+int main() {
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");
+    // Set minimum size (will enforce through event handling)
+    sf::Vector2u minWindowSize(400, 300);
 
-int main() {  
-  sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");  
-  Player player;  
-  Enemy enemy;
-  Level level("Assets/BG/Levels.ldtk");  
-  sf::Clock clock;  
+    Player player;
+    Enemy enemy;
+    Level level("Assets/BG/Levels.ldtk", window);
+    sf::Clock clock;
+    bool isFullscreen = false;
 
-  sf::Vector2i startPos = level.getStartPosition();
-  player.setGridPosition(startPos.x, startPos.y);
+    player.setStartPosition(level.getStartPosition());
 
-  while (window.isOpen()) {  
-      sf::Event event;  
-      while (window.pollEvent(event)) {  
-          if (event.type == sf::Event::Closed)  
-              window.close();  
-      }  
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::F11) {
+                    isFullscreen = !isFullscreen;
+                    window.close();
+                    window.create(isFullscreen ?
+                        sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600),
+                        "Save the princess",
+                        (isFullscreen ? sf::Style::Fullscreen : sf::Style::Default));
+                    window.setVerticalSyncEnabled(true);
+                    level.Resize(window);
+                    window.setView(level.getGameView());
+                }
+            }
+        }
+        //Recentering player after resing window
+        player.setStartPosition(level.getStartPosition());
+        //Debugging player start spawn point
+        sf::Vector2f startPos = level.getStartPosition();
+        std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
+        std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
 
-      float deltaTime = clock.restart().asSeconds();  
+        float deltaTime = clock.restart().asSeconds();
+        window.setView(level.getGameView());
+        window.clear(sf::Color::Black);
+        level.draw(window);
 
-      window.clear(sf::Color::Black);  
-      level.draw(window);  
-      
-      player.update(deltaTime);  
-      player.draw(window);  
-      enemy.update(deltaTime);
-      enemy.draw(window);
-      
-      window.display();  
-  }  
+        player.update(deltaTime);
+        player.draw(window);
+        enemy.update(deltaTime);
+        enemy.draw(window);
 
-  return 0;  
+        // Reset view for UI elements if needed
+        window.setView(window.getDefaultView());
+        window.display();
+    }
+    return 0;
 }
+
+ 
+

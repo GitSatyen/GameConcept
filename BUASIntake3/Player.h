@@ -31,6 +31,8 @@ public:
 	void update(float deltaTime);
 	void Movement(float deltaTime);
 	void doAnime(float deltaTime);
+	void setStartPosition(const sf::Vector2f& position);
+	sf::Vector2f getPosition() const;
 	void setGridPosition(int x, int y);
 	void moveToGridPosition(int x, int y);
 	sf::Vector2i getGridPosition() const;
@@ -44,7 +46,7 @@ private:
 	sf::Texture FallAnim;
 	sf::Texture HurtAnim;
 	sf::Texture DeadAnim;
-	sf::Sprite sprite; // Empty sprite object
+	sf::Sprite sprite; // Empty sprite object (player object refrence)
 	
 
 	sf::Vector2i sourceImage;

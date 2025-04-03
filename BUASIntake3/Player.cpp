@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Level.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
 
@@ -30,9 +31,15 @@ Player::Player()
 	}
 		//Set first frame of the animation
 		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
-		//Set sprite position
-		sprite.setPosition(100, 250);
-	
+		
+		//Center sprite origin
+		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f,
+						 sprite.getLocalBounds().height * 0.75f);
+
+		//Adjust scale to match grid size
+		float scale = 16.0f / 32.0f;
+		sprite.setScale(scale, scale);
+
 	//Set Idle as default State
 	setState(State::Idle);
 }
@@ -78,6 +85,8 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
+	Movement(deltaTime);
+
 	//Player movement
 	if (isMoving) {
 		//Move towards the target position
@@ -171,14 +180,30 @@ void Player::doAnime(float deltaTime)
 	}*/
 }
 
+void Player::setStartPosition(const sf::Vector2f& position)
+{
+	sf::Vector2i gridPos(
+		static_cast<int>(position.x / tileSize),
+		static_cast<int>(position.y / tileSize)
+	);
+	setGridPosition(gridPos.x, gridPos.y);
+
+	//Directly set pixel position from entity coordinates
+	sprite.setPosition(position);
+	targetPosition = position;
+
+}
+
+sf::Vector2f Player::getPosition() const
+{
+	return sprite.getPosition();
+}
+
 void Player::setGridPosition(int x, int y)
 {
-	gridPosition.x = x;
-	gridPosition.y = y;
-
-	//Calculate center position
-	targetPosition.x = x * tileSize + tileSize / 2.0f - sprite.getLocalBounds().width / 2.0f;
-	targetPosition.y = y * tileSize + tileSize / 2.0f - sprite.getLocalBounds().height / 2.0f;
+	gridPosition = sf::Vector2i(x, y);
+	targetPosition = sf::Vector2f(
+		x * tileSize + tileSize / 2.0f,	y * tileSize + tileSize / 2.0f);
 	sprite.setPosition(targetPosition);
 }
 

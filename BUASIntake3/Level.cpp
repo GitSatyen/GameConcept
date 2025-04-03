@@ -40,7 +40,7 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 	return proj;
 }
 
-sf::Vector2i Level::getStartPosition() const
+sf::Vector2f Level::getStartPosition() const
 {
 	try {
 		const auto& entities = level.getLayer("Objects");
@@ -48,26 +48,32 @@ sf::Vector2i Level::getStartPosition() const
 
 		if (!startEntities.empty()) {
 			const auto& startPos = startEntities[0].get();
-			return sf::Vector2i(
-				startPos.getPosition().x / 16, //16x16 tiles
-				startPos.getPosition().y / 16
-			);
+			return sf::Vector2f(startPos.getPosition().x + startPos.getSize().x / 2.0f,
+								startPos.getPosition().y + startPos.getSize().y / 2.0f);
 		}
+		return sf::Vector2f(baseWidth / 2, baseHeight / 2);
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Couldnt find startEntity" << e.what() << "\n";
 		throw;
 	}
 
-	return sf::Vector2i(5, 5);
+	return sf::Vector2f(baseWidth / 2, baseHeight / 2);
 }
 
 
-Level::Level(const std::string& filepath) :
+Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	project(loadProject(filepath)),
 	world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
 	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0])
 {
+	//Get level dimensions
+	baseWidth = level.size.x;
+	baseHeight = level.size.y;
+
+	//Setup game view to center of the window
+	gameView.setSize(baseWidth, baseHeight);
+	gameView.setCenter(baseWidth / 2, baseHeight / 2);
 
 	std::cout << "World name: " << world.getName() << "\n";
 	std::cout << "Level name: " << level.name << ", ID: " << level.iid << "\n";
@@ -78,6 +84,7 @@ Level::Level(const std::string& filepath) :
 	}
 	tile_sprite.setTexture(tileset_texture);
 
+	Resize(window);
 
 	for (const auto& layer : level.allLayers()) {
 		// Check if the layer is an entity layer
@@ -100,6 +107,9 @@ Level::Level(const std::string& filepath) :
 
 void Level::draw(sf::RenderTarget& image)
 {
+	// Set the custom view before drawing
+	image.setView(gameView);
+
 	int tile_size = 16;
 	//Parse background layer
 	const auto& bg_layer = level.getLayer("BG");
@@ -168,8 +178,45 @@ void Level::draw(sf::RenderTarget& image)
 				rect.setOutlineColor(sf::Color::Red);      // Red outline
 				rect.setOutlineThickness(2.0f);            // 2px border thickness
 				image.draw(rect);						   // Draw the rectangle	
+				//Display Starting position
+				sf::CircleShape startMarker(8.0f);
+				startMarker.setFillColor(sf::Color::Blue);
+				startMarker.setPosition(getStartPosition());
+				image.draw(startMarker);
+				// Draw entity center point
+				sf::CircleShape centerDot(2.0f);
+				centerDot.setFillColor(sf::Color::Green);
+				centerDot.setPosition(
+					position.x + size.x / 2.0f - 2.0f,
+					position.y + size.y / 2.0f - 2.0f
+				);
+				image.draw(centerDot);
+
 #endif			//ONLY WHILE DEBUGGING 
 			}
 		}
 	}
+	//image.setView(image.getDefaultView());
 }
+
+void Level::Resize(sf::RenderWindow& window)
+{
+	//Get all window and level dimensions
+	sf::Vector2u windowSize = window.getSize();
+	//Calculate aspect ratios
+	float windowAspect = static_cast<float>(windowSize.x) / windowSize.y;
+	float levelAspect = baseWidth / baseHeight;
+
+	if (windowAspect > levelAspect) {
+		//Make Window fit to height
+		gameView.setSize(baseWidth * windowAspect, baseHeight);
+	}
+	else
+	{
+		//Make Window fit to width
+		gameView.setSize(baseWidth, baseWidth / windowAspect);
+	}
+	//Center Window
+	gameView.setCenter(baseWidth / 2, baseHeight / 2);
+}
+
