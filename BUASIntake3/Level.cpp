@@ -127,29 +127,6 @@ void Level::draw(sf::RenderTarget& image)
 		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
 		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size);
 		image.draw(tile_sprite);
-
-		//Grok solution
-		// Check if we've already drawn a dot at this position
-		std::pair<int, int> pos = { grid_x, grid_y };
-		if (drawn_positions.find(pos) != drawn_positions.end()) {
-			continue; // Skip if we've already drawn a dot here
-		}
-
-		// Mark this position as drawn
-		drawn_positions.insert(pos);
-
-		//Calculate the center of the tile in pixel coordinates
-		float center_x = tile.getGridPosition().x * tile_size + tile_size / 2.0f;
-		float center_y = tile.getGridPosition().y * tile_size + tile_size / 2.0f;
-
-		sf::CircleShape circle;
-		circle.setRadius(2.0f); // Smaller radius for visibility (adjust as needed)
-		circle.setOutlineColor(sf::Color::Yellow); 
-		// Set position to the center
-		circle.setPosition(center_x - 2.0f, center_y - 2.0f);
-#ifndef NDEBUG
-		image.draw(circle);
-#endif
 	}
 
 	//Acces enitity properties
@@ -178,11 +155,6 @@ void Level::draw(sf::RenderTarget& image)
 				rect.setOutlineColor(sf::Color::Red);      // Red outline
 				rect.setOutlineThickness(2.0f);            // 2px border thickness
 				image.draw(rect);						   // Draw the rectangle	
-				//Display Starting position
-				sf::CircleShape startMarker(8.0f);
-				startMarker.setFillColor(sf::Color::Blue);
-				startMarker.setPosition(getStartPosition());
-				image.draw(startMarker);
 				// Draw entity center point
 				sf::CircleShape centerDot(2.0f);
 				centerDot.setFillColor(sf::Color::Green);
@@ -190,13 +162,37 @@ void Level::draw(sf::RenderTarget& image)
 					position.x + size.x / 2.0f - 2.0f,
 					position.y + size.y / 2.0f - 2.0f
 				);
-				image.draw(centerDot);
+				//image.draw(centerDot);
 
 #endif			//ONLY WHILE DEBUGGING 
 			}
 		}
+		
 	}
-	//image.setView(image.getDefaultView());
+	try {
+		const auto& walkingLayer = level.getLayer("WalkingGround");
+		const int grid_size = walkingLayer.getCellSize();
+		//Deepseek solution
+		for (int y = 0; y < walkingLayer.getGridSize().y; y++) {
+			for (int x = 0; x < walkingLayer.getGridSize().x; x++) {
+				const auto& value = walkingLayer.getIntGridVal(x, y).value;
+
+				if (value != -1) {
+					float center_X = x * grid_size + grid_size / 2.0f;
+					float center_Y = y * grid_size + grid_size / 2.0f;
+#ifndef NDEBUG
+					sf::CircleShape centerDot(2.0f);
+					centerDot.setFillColor(sf::Color::Green);
+					centerDot.setPosition(center_X - 2.0f, center_Y - 2.0f);
+					image.draw(centerDot);
+#endif
+				}
+			}
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error drawing WalkingGround layer: " << e.what() << "\n";
+	}
 }
 
 void Level::Resize(sf::RenderWindow& window)
