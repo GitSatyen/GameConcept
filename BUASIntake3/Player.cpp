@@ -34,7 +34,7 @@ Player::Player()
 		
 		//Center sprite origin
 		sprite.setOrigin(sprite.getLocalBounds().width / 2.0f,
-						 sprite.getLocalBounds().height * 0.75f);
+						 sprite.getLocalBounds().height / 1.3f); //Adjusted to fit within the grid
 
 		//Adjust scale to match grid size
 		float scale = 16.0f / 32.0f;
@@ -88,7 +88,7 @@ void Player::update(float deltaTime)
 	Movement(deltaTime);
 
 	//Player movement
-	if (isMoving) {
+	if (isMoving) { //Deepseek solution
 		//Move towards the target position
 		sf::Vector2f direction = targetPosition - sprite.getPosition();
 		float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
@@ -123,35 +123,57 @@ void Player::update(float deltaTime)
 
 void Player::Movement(float deltaTime)
 {
-	if(isMoving) return; // Don't process new movement while already moving
+	if (!keyProcessed) {
+		sf::Vector2i newGridPosition = gridPosition;
+		bool moved = false;
 
-	sf::Vector2i newGridPosition = gridPosition;
-	bool moved = false;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			newGridPosition.x--;
+			moved = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		{
+			newGridPosition.x++;
+			moved = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{
+			newGridPosition.y--;
+			moved = true;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			newGridPosition.y++;
+			moved = true;
+		}
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		newGridPosition.x--;
-		moved = true;
+		if (moved && level) {
+			std::cout << "Attempting to move to grid: ("
+				<< newGridPosition.x << "," << newGridPosition.y << ")\n";
+			if (level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
+				targetPosition = sf::Vector2f(
+					newGridPosition.x * tileSize + tileSize / 2.0f,
+					newGridPosition.y * tileSize + tileSize / 2.0f
+				);
+				gridPosition = newGridPosition;
+				isMoving = true;
+				keyProcessed = true;
+			}
+			else {
+				printf("Tile blocked\n");
+			}
+		}
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		newGridPosition.x++;
-		moved = true;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		newGridPosition.y--;
-		moved = true;
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		newGridPosition.y++;
-		moved = true;
-	}
-
-	if (moved) {
-		moveToGridPosition(newGridPosition.x, newGridPosition.y); // Normalize to maintain consistent speed diagonally
-	}
+	//Deepseek solution
+	else { //Reset the flag when all keys are released
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			keyProcessed = false;
+		}
+	}	
 }
 
 void Player::doAnime(float deltaTime)
@@ -182,16 +204,15 @@ void Player::doAnime(float deltaTime)
 
 void Player::setStartPosition(const sf::Vector2f& position)
 {
-	sf::Vector2i gridPos(
-		static_cast<int>(position.x / tileSize),
-		static_cast<int>(position.y / tileSize)
+	gridPosition.x = static_cast<int>(position.x / tileSize);
+	gridPosition.y = static_cast<int>(position.y / tileSize);
+	targetPosition = sf::Vector2f(
+		gridPosition.x * tileSize + tileSize / 2.0f,
+		gridPosition.y * tileSize + tileSize / 2.0f
 	);
-	setGridPosition(gridPos.x, gridPos.y);
-
-	//Directly set pixel position from entity coordinates
 	sprite.setPosition(position);
-	targetPosition = position;
-
+	std::cout << "Player initialized at grid: ("
+		<< gridPosition.x << "," << gridPosition.y << ")\n";
 }
 
 sf::Vector2f Player::getPosition() const
@@ -209,14 +230,18 @@ void Player::setGridPosition(int x, int y)
 
 void Player::moveToGridPosition(int x, int y)
 {
-	if (!isMoving) {
+	/*if (level && level->isWalkingGround(x, y)) {
 		gridPosition.x = x;
 		gridPosition.y = y;
-		// Calculate the center position of the target tile
-		targetPosition.x = x * tileSize + tileSize / 2.0f - sprite.getLocalBounds().width / 2.0f;
-		targetPosition.y = y * tileSize + tileSize / 2.0f - sprite.getLocalBounds().height / 2.0f;
-		isMoving = true;
-	}
+		sprite.setPosition(x * tileSize + tileSize / 2.0f,
+						   y * tileSize + tileSize / 2.0f);
+	}*/
+}
+
+void Player::setLevel(const Level& levelRef)
+{
+	//Deepseek solution
+	level = &levelRef;
 }
 
 sf::Vector2i Player::getGridPosition() const

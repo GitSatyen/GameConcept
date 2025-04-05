@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
 #include <SFML/Graphics/Sprite.hpp>
+#include "Level.h"
 
 class Player
 {
@@ -35,9 +36,13 @@ public:
 	sf::Vector2f getPosition() const;
 	void setGridPosition(int x, int y);
 	void moveToGridPosition(int x, int y);
+	void setLevel(const Level& levelRef);
 	sf::Vector2i getGridPosition() const;
 
 private:
+	//Pointer Level class
+	const Level* level = nullptr;
+
 	State state = State::None;
 
 	sf::Texture IdleAnim;
@@ -54,10 +59,13 @@ private:
 	sf::Vector2i gridPosition;
 	sf::Vector2f targetPosition;
 	sf::Vector2f velocity;
+
+	bool keyProcessed = false;
 	bool isMoving = false;
+
 	const int tileSize = 16;
 	int hp = 4;
 	float frameTime;
-	float speed = 100.0f;
+	float speed = 300.0f;
 	//sf::RectangleShape player;
 };

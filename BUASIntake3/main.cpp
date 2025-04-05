@@ -17,7 +17,15 @@ int main() {
     sf::Clock clock;
     bool isFullscreen = false;
 
+    //Link Level to Player
+    player.setLevel(level);
+    //Set player position of the start entity
     player.setStartPosition(level.getStartPosition());
+
+    //Debugging player start spawn point
+    sf::Vector2f startPos = level.getStartPosition();
+    std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
+    std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -39,12 +47,6 @@ int main() {
                 }
             }
         }
-        //Recentering player after resing window
-        player.setStartPosition(level.getStartPosition());
-        //Debugging player start spawn point
-        sf::Vector2f startPos = level.getStartPosition();
-        //std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
-        //std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
 
         float deltaTime = clock.restart().asSeconds();
         window.setView(level.getGameView());

@@ -16,6 +16,8 @@ public:
 	const ldtk::Level& getLevel() const { return level; }
 	const ldtk::World& getWorld() const { return world; }
 
+	bool isWalkingGround(int gridX, int gridY) const;
+
 private:
 	ldtk::Project project;
 	const ldtk::World& world; //Using pointers because World can't be default contructed

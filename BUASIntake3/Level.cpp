@@ -129,6 +129,32 @@ void Level::draw(sf::RenderTarget& image)
 		image.draw(tile_sprite);
 	}
 
+	//Displays centerpoint of intGrid layer WalkingGround
+	try {
+		const auto& walkingLayer = level.getLayer("WalkingGround");
+		const int grid_size = walkingLayer.getCellSize();
+		//Deepseek solution
+		for (int y = 0; y < walkingLayer.getGridSize().y; y++) {
+			for (int x = 0; x < walkingLayer.getGridSize().x; x++) {
+				const auto& value = walkingLayer.getIntGridVal(x, y).value;
+
+				if (value != -1) {
+					float center_X = x * grid_size + grid_size / 2.0f;
+					float center_Y = y * grid_size + grid_size / 2.0f;
+#ifndef NDEBUG
+					sf::CircleShape centerDot(2.0f);
+					centerDot.setFillColor(sf::Color::Green);
+					centerDot.setPosition(center_X - 2.0f, center_Y - 2.0f);
+					image.draw(centerDot);
+#endif
+				}
+			}
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error drawing WalkingGround layer: " << e.what() << "\n";
+	}
+
 	//Acces enitity properties
 	// Iterate through layers in the level
 	for (const auto& layer : level.allLayers()) {
@@ -157,41 +183,16 @@ void Level::draw(sf::RenderTarget& image)
 				image.draw(rect);						   // Draw the rectangle	
 				// Draw entity center point
 				sf::CircleShape centerDot(2.0f);
-				centerDot.setFillColor(sf::Color::Green);
+				centerDot.setFillColor(sf::Color::Cyan);
 				centerDot.setPosition(
 					position.x + size.x / 2.0f - 2.0f,
 					position.y + size.y / 2.0f - 2.0f
 				);
-				//image.draw(centerDot);
+				image.draw(centerDot);
 
 #endif			//ONLY WHILE DEBUGGING 
 			}
-		}
-		
-	}
-	try {
-		const auto& walkingLayer = level.getLayer("WalkingGround");
-		const int grid_size = walkingLayer.getCellSize();
-		//Deepseek solution
-		for (int y = 0; y < walkingLayer.getGridSize().y; y++) {
-			for (int x = 0; x < walkingLayer.getGridSize().x; x++) {
-				const auto& value = walkingLayer.getIntGridVal(x, y).value;
-
-				if (value != -1) {
-					float center_X = x * grid_size + grid_size / 2.0f;
-					float center_Y = y * grid_size + grid_size / 2.0f;
-#ifndef NDEBUG
-					sf::CircleShape centerDot(2.0f);
-					centerDot.setFillColor(sf::Color::Green);
-					centerDot.setPosition(center_X - 2.0f, center_Y - 2.0f);
-					image.draw(centerDot);
-#endif
-				}
-			}
-		}
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Error drawing WalkingGround layer: " << e.what() << "\n";
+		}	
 	}
 }
 
@@ -216,3 +217,18 @@ void Level::Resize(sf::RenderWindow& window)
 	gameView.setCenter(baseWidth / 2, baseHeight / 2);
 }
 
+bool Level::isWalkingGround(int gridX, int gridY) const
+{
+	//Deepseek solution
+	try {
+		const auto& walkingLayer = level.getLayer("WalkingGround");
+		bool walkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+		std::cout << "Checking tile (" << gridX << "," << gridY << "): "
+			<< (walkable ? "Walkable" : "Blocked") << "\n";
+		return walkable;
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error returning WalkingGround layer: " << e.what() << "\n";
+		return false; // Invalid if layer/tile not found
+	}
+}
