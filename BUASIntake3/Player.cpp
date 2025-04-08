@@ -13,7 +13,7 @@ std::map <Player::State, std::string> stateMap = {
 	{Player::State::Dead, "Dead"}
 };
 
-Player::Player()
+Player::Player() : tileSize(32)
 {
 	sourceImage = sf::Vector2i(0, 0);
 	frameTime = 0.0f;
@@ -37,7 +37,7 @@ Player::Player()
 						 sprite.getLocalBounds().height / 1.3f); //Adjusted to fit within the grid
 
 		//Adjust scale to match grid size
-		float scale = 16.0f / 32.0f;
+		//float scale = 16.0f / 32.0f;
 		sprite.setScale(scale, scale);
 
 	//Set Idle as default State
@@ -131,11 +131,15 @@ void Player::Movement(float deltaTime)
 		{
 			newGridPosition.x--;
 			moved = true;
+			sprite.setScale(-std::abs(scale), scale); // Flip sprite left
+			//std::cout << "Left pressed\n";
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
 			newGridPosition.x++;
 			moved = true;
+			sprite.setScale(std::abs(scale), scale); // Flip sprite left
+			//std::cout << "Right pressed\n";
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
@@ -148,21 +152,14 @@ void Player::Movement(float deltaTime)
 			moved = true;
 		}
 
-		if (moved && level) {
-			std::cout << "Attempting to move to grid: ("
-				<< newGridPosition.x << "," << newGridPosition.y << ")\n";
-			if (level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
-				targetPosition = sf::Vector2f(
-					newGridPosition.x * tileSize + tileSize / 2.0f,
-					newGridPosition.y * tileSize + tileSize / 2.0f
-				);
-				gridPosition = newGridPosition;
-				isMoving = true;
-				keyProcessed = true;
-			}
-			else {
-				printf("Tile blocked\n");
-			}
+		if (moved && level && level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
+			targetPosition = sf::Vector2f(
+				newGridPosition.x * tileSize + tileSize / 2.0f,
+				newGridPosition.y * tileSize + tileSize / 2.0f
+			);
+			gridPosition = newGridPosition;
+			isMoving = true;
+			keyProcessed = true;
 		}
 	}
 	//Deepseek solution
@@ -242,6 +239,7 @@ void Player::setLevel(const Level& levelRef)
 {
 	//Deepseek solution
 	level = &levelRef;
+	tileSize = level->getWalkingGroundCellSize();
 }
 
 sf::Vector2i Player::getGridPosition() const

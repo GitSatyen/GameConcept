@@ -222,13 +222,51 @@ bool Level::isWalkingGround(int gridX, int gridY) const
 	//Deepseek solution
 	try {
 		const auto& walkingLayer = level.getLayer("WalkingGround");
-		bool walkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
-		std::cout << "Checking tile (" << gridX << "," << gridY << "): "
-			<< (walkable ? "Walkable" : "Blocked") << "\n";
-		return walkable;
+		// Check if grid coordinates are within bounds (Deepseek solution)
+		if (gridX < 0 || gridY < 0 ||
+			gridX >= walkingLayer.getGridSize().x ||
+			gridY >= walkingLayer.getGridSize().y) {
+			return false;
+		}
+		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+		std::cout << "Tile (" << gridX << "," << gridY << "): "
+			<< (isWalkable ? "Walkable" : "Blocked") << "\n";
+
+		// Return when tile is walkable (value != -1)
+		return (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error returning WalkingGround layer: " << e.what() << "\n";
 		return false; // Invalid if layer/tile not found
+	}
+}
+
+int Level::getWalkingGroundCellSize() const
+{
+	auto& gridSize = level.getLayer("WalkingGround");
+	try {
+		const auto& walkingLayer = level.getLayer("WalkingGround");
+		return walkingLayer.getCellSize();
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error getting WalkingGround cell size: " << e.what() << "\n";
+		return NULL;
+	}
+}
+
+sf::Vector2i Level::getGridSize() const
+{
+	auto& gridSize = level.getLayer("WalkingGround");
+	try {
+		const auto& walkingLayer = level.getLayer("WalkingGround");
+		return sf::Vector2i(
+			walkingLayer.getGridSize().x,
+			walkingLayer.getGridSize().y
+		);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Error getting grid size: " << e.what() << "\n";
+		return sf::Vector2i(0, 0);
 	}
 }

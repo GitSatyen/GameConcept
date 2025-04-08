@@ -63,8 +63,9 @@ private:
 	bool keyProcessed = false;
 	bool isMoving = false;
 
-	const int tileSize = 16;
+	int tileSize;
 	int hp = 4;
+	const float scale = 16.0f / 32.0f;
 	float frameTime;
 	float speed = 300.0f;
 	//sf::RectangleShape player;

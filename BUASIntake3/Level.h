@@ -17,6 +17,9 @@ public:
 	const ldtk::World& getWorld() const { return world; }
 
 	bool isWalkingGround(int gridX, int gridY) const;
+	int getWalkingGroundCellSize() const;
+
+	sf::Vector2i getGridSize() const;
 
 private:
 	ldtk::Project project;
