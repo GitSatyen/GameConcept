@@ -35,7 +35,6 @@ public:
 	void setStartPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;
 	void setGridPosition(int x, int y);
-	void moveToGridPosition(int x, int y);
 	void setLevel(const Level& levelRef);
 	sf::Vector2i getGridPosition() const;
 

@@ -1,7 +1,7 @@
 #include "Level.h"
+#include "Player.h"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
-#include "Player.h"
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -99,6 +99,14 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 
 				for (const auto& field : entity.allFields()) {
 					printf("Field ", field.name, "= ", field.type);
+				}
+
+				if (entity.getName() == "Enemy") {
+					sf::Vector2f pos(
+						entity.getPosition().x + entity.getSize().x / 2.0f,
+						entity.getPosition().y + entity.getSize().y / 2.0f
+					);
+					enemyPositions.push_back(pos);
 				}
 			}
 		}

@@ -546,38 +546,6 @@
 							"__worldY": 128
 						},
 						{
-							"__identifier": "Collider",
-							"__grid": [0,0],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FF0044",
-							"iid": "d76c3080-e920-11ef-869b-0ffe81fbbc6d",
-							"width": 32,
-							"height": 335,
-							"defUid": 13,
-							"px": [16,0],
-							"fieldInstances": [],
-							"__worldX": 16,
-							"__worldY": 0
-						},
-						{
-							"__identifier": "Collider",
-							"__grid": [9,0],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": null,
-							"__smartColor": "#FF0044",
-							"iid": "1e3782d0-e920-11ef-869b-3bb06c82e9fe",
-							"width": 32,
-							"height": 335,
-							"defUid": 13,
-							"px": [288,0],
-							"fieldInstances": [],
-							"__worldX": 288,
-							"__worldY": 0
-						},
-						{
 							"__identifier": "Start",
 							"__grid": [2,9],
 							"__pivot": [0,0],

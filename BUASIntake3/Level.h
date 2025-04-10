@@ -2,6 +2,8 @@
 #include "LDtkLoader/Project.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include "SFML/Graphics.hpp"
+#include <vector>
+
 class Level
 {
 public:
@@ -21,11 +23,15 @@ public:
 
 	sf::Vector2i getGridSize() const;
 
+	const std::vector<sf::Vector2f>& getEnemyPositions() const { return enemyPositions; }
+
 private:
 	ldtk::Project project;
 	const ldtk::World& world; //Using pointers because World can't be default contructed
 	const ldtk::Level& level; //Using pointers because Level can't be default contructed
 
+	std::vector<sf::Vector2f> enemyPositions;
+	
 	sf::Sprite tile_sprite;
 	sf::Texture tileset_texture;
 	sf::View gameView;

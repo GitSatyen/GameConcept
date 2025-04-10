@@ -37,7 +37,6 @@ Player::Player() : tileSize(32)
 						 sprite.getLocalBounds().height / 1.3f); //Adjusted to fit within the grid
 
 		//Adjust scale to match grid size
-		//float scale = 16.0f / 32.0f;
 		sprite.setScale(scale, scale);
 
 	//Set Idle as default State
@@ -223,16 +222,6 @@ void Player::setGridPosition(int x, int y)
 	targetPosition = sf::Vector2f(
 		x * tileSize + tileSize / 2.0f,	y * tileSize + tileSize / 2.0f);
 	sprite.setPosition(targetPosition);
-}
-
-void Player::moveToGridPosition(int x, int y)
-{
-	/*if (level && level->isWalkingGround(x, y)) {
-		gridPosition.x = x;
-		gridPosition.y = y;
-		sprite.setPosition(x * tileSize + tileSize / 2.0f,
-						   y * tileSize + tileSize / 2.0f);
-	}*/
 }
 
 void Player::setLevel(const Level& levelRef)

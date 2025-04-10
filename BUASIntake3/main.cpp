@@ -12,7 +12,7 @@ int main() {
     sf::Vector2u minWindowSize(400, 300);
 
     Player player;
-    Enemy enemy;
+    std::vector<Enemy> enemies;
     Level level("Assets/BG/Levels.ldtk", window);
     sf::Clock clock;
     bool isFullscreen = false;
@@ -21,6 +21,16 @@ int main() {
     player.setLevel(level);
     //Set player position of the start entity
     player.setStartPosition(level.getStartPosition());
+
+    //Deepseek fix
+    // Reserve space to avoid reallocation
+    enemies.reserve(level.getEnemyPositions().size());
+    //Set positions of enemies
+    for (const auto& pos : level.getEnemyPositions()) {
+        enemies.emplace_back(); // Calls Enemy() constructor
+        enemies.back().setPosition(pos); // Set position after creation
+        enemies.back().setLevel(level);
+    }
 
     //Debugging player start spawn point
     sf::Vector2f startPos = level.getStartPosition();
@@ -55,8 +65,11 @@ int main() {
 
         player.update(deltaTime);
         player.draw(window);
-        enemy.update(deltaTime);
-        enemy.draw(window);
+
+        for (auto& enemy : enemies) {
+            enemy.update(deltaTime);
+            enemy.draw(window);
+        }
 
         // Reset view for UI elements if needed
         window.setView(window.getDefaultView());

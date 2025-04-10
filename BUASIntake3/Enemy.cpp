@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Level.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
 
@@ -26,13 +27,18 @@ Enemy::Enemy()
 		//Place texture in sprite object
 		sprite.setTexture(IdleAnim);
 		sprite.setTextureRect(sf::IntRect(0, 0, 68, 64));
+		printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
 	}
 	
-	//Set sprite position
-	sprite.setPosition(200, 250);
-	sprite.setScale(1.2f, 1.2f);
+	// Center the sprite origin
+	sprite.setOrigin( //Adjusting both values to fit inside Entity grid
+		sprite.getLocalBounds().width / 5.5f, 
+		sprite.getLocalBounds().height / 1.1f 
+	);
 
-	IdleAnim.setSmooth(false);
+	//Resizing enemy and adjusting sprite orientation to face right
+	sprite.setScale(-std::abs(scale), scale);
+
 	//Set Idle as default State
 	setState(State::Idle);
 }
@@ -43,7 +49,7 @@ void Enemy::setState(State newState)
 	{
 		switch (newState)
 		{
-			//Calls action when traniston away from state
+		//Calls action when traniston away from state
 		case State::Idle:
 			break;
 		case State::Hurt:
@@ -102,3 +108,18 @@ void Enemy::doAnime(float deltaTime)
 		break;
 	}*/
 }
+
+void Enemy::setPosition(const sf::Vector2f& position)
+{
+	sf::Vector2f centeredPos(
+		position.x + tileSize / 2.0f,
+		position.y + tileSize / 2.0f
+	);
+	sprite.setPosition(centeredPos);
+}
+
+void Enemy::setLevel(const Level& levelRef)
+{
+	tileSize = levelRef.getWalkingGroundCellSize();
+}
+
