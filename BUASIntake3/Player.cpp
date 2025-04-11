@@ -23,6 +23,9 @@ Player::Player() : tileSize(32)
 	if (!IdleAnim.loadFromFile("Assets/Player/Idle.png")) {
 		printf("Failed to load sprite texture\n");
 	}
+	if (!RunAnim.loadFromFile("Assets/Player/Walk.png")) {
+		printf("Failed to load sprite texture\n");
+	}
 
 	else {
 		printf("Sprite Found\n");
@@ -51,8 +54,10 @@ void Player::setState(State newState)
 		{
 		//Calls action when traniston away from state
 		case State::Idle:
+			sprite.setTexture(IdleAnim);
 			break;
 		case State::Running:
+			sprite.setTexture(RunAnim);
 			break;
 		case State::Hurt:
 			break;
@@ -65,21 +70,20 @@ void Player::setState(State newState)
 
 void Player::draw(sf::RenderTarget& image)
 {
-	image.draw(sprite);
-	//switch (state)
-	//{
-	//case State::Idle:
-	//	//image.draw(IdleAnim);
-	//	break;
-	//case State::Running:
-	//	//image.draw(RunAnim);
-	//	break;
-	//case State::Hurt:
-	//	//image.draw(HurtAnim);
-	//	break;
-	//case State::Dead:
-	//	//image.draw(DeadAnim);
-	//}
+	switch (state)
+	{
+	case State::Idle:
+		image.draw(sprite);
+		break;
+	case State::Running:
+		image.draw(sprite);
+		break;
+	case State::Hurt:
+		image.draw(sprite);
+		break;
+	case State::Dead:
+		image.draw(sprite);
+	}
 }
 
 void Player::update(float deltaTime)
@@ -106,18 +110,12 @@ void Player::update(float deltaTime)
 		}
 	}
 
-	//Animate player sprite frame by frame
-	frameTime += deltaTime;
-	if (frameTime >= 0.2f) {
-		sourceImage.x++;
-		// Check sprite sheet width
-		if (sourceImage.x * 128 >= IdleAnim.getSize().x) { 
-			sourceImage.x = 0;
-		}
-		//Draw first frame of the spritesheet
-		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
-		frameTime = 0.0f;
+	//Tranistion to idle when movement is finished
+	if (!isMoving && state != State::Idle) {
+		setState(State::Idle);
 	}
+
+	doAnime(deltaTime);
 }
 
 void Player::Movement(float deltaTime)
@@ -128,7 +126,7 @@ void Player::Movement(float deltaTime)
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
-			newGridPosition.x--;
+			newGridPosition.x-- * speed;
 			moved = true;
 			sprite.setScale(-std::abs(scale), scale); // Flip sprite left
 			//std::cout << "Left pressed\n";
@@ -159,6 +157,7 @@ void Player::Movement(float deltaTime)
 			gridPosition = newGridPosition;
 			isMoving = true;
 			keyProcessed = true;
+			setState(State::Running);
 		}
 	}
 	//Deepseek solution
@@ -170,32 +169,80 @@ void Player::Movement(float deltaTime)
 			keyProcessed = false;
 		}
 	}	
+
+	Player::State currentState = getState();
+	// Check state
+	if (currentState == Player::State::Idle) {
+		printf("Idle");
+	}
+	else if (currentState == Player::State::Running) {
+		printf("Running");
+	}
 }
 
 void Player::doAnime(float deltaTime)
 {
 	// Switch animation based on state its in
-	/*switch (state)
+	switch (state)
 	{
 	case State::Idle:
-		IdleAnim.
+		doIdle(deltaTime);
 		break;
 	case State::Running:
 		doRunning(deltaTime);
 		break;
-	case State::Jumping:
-		doJumping(deltaTime);
-		break;
-	case State::Falling:
-		doFalling(deltaTime);
-		break;
-	case State::Hit:
-		doHit(deltaTime);
+	case State::Hurt:
+		doHurt(deltaTime);
 		break;
 	case State::Dead:
 		doDead(deltaTime);
 		break;
-	}*/
+	}
+}
+
+void Player::doIdle(float deltaTime)
+{
+	//Animate player sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		sourceImage.x++;
+		// Check sprite sheet width
+		if (sourceImage.x * 128 >= IdleAnim.getSize().x) {
+			sourceImage.x = 0;
+		}
+		//Draw first frame of the spritesheet
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		frameTime = 0.0f;
+	}
+}
+
+void Player::doRunning(float deltaTime)
+{
+	//Animate player sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		sourceImage.x++;
+		// Check sprite sheet width
+		if (sourceImage.x * 128 >= RunAnim.getSize().x) {
+			sourceImage.x = 0;
+		}
+		//Draw first frame of the spritesheet
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		frameTime = 0.0f;
+	}
+
+}
+
+void Player::doAttack(float deltaTime)
+{
+}
+
+void Player::doHurt(float deltaTime)
+{
+}
+
+void Player::doDead(float deltaTime)
+{
 }
 
 void Player::setStartPosition(const sf::Vector2f& position)

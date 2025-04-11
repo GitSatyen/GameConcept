@@ -1,14 +1,13 @@
 TO DO
 
-Add player sprite animations:
-	-Add all player movement animations
-->
 Place the princess at the end of the level:
 	-Make the princess spawn in the level
 	-Animate the princess
-	-Player wins when reaching the princess
-->Add Winning game functionallity:
-	-Displays image on telling player did good (At the final show win screen)
+->
+Add Winning condition:
+	-Add collision box around the player and princess (enmey to)
+	-Player wins when colliding with the princess
+	-A text should pop up telling the player has won
 	-Clear the image and display the next level
 ->
 Create dead functionallity player:

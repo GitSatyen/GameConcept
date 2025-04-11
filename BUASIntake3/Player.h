@@ -31,7 +31,14 @@ public:
 	void draw(sf::RenderTarget& image);
 	void update(float deltaTime);
 	void Movement(float deltaTime);
+
 	void doAnime(float deltaTime);
+	void doIdle(float deltaTime);
+	void doRunning(float deltaTime);
+	void doAttack(float deltaTime);
+	void doHurt(float deltaTime);
+	void doDead(float deltaTime);
+
 	void setStartPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;
 	void setGridPosition(int x, int y);
@@ -66,6 +73,5 @@ private:
 	int hp = 4;
 	const float scale = 16.0f / 32.0f;
 	float frameTime;
-	float speed = 300.0f;
-	//sf::RectangleShape player;
+	float speed = 100.0f;
 };
