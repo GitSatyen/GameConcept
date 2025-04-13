@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Enemy.h"
+#include "Princess.h"
 #include "LDtkLoader/Project.hpp"
 
 int main() {
@@ -12,6 +13,7 @@ int main() {
     sf::Vector2u minWindowSize(400, 300);
 
     Player player;
+    Princess princess;
     std::vector<Enemy> enemies;
     Level level("Assets/BG/Levels.ldtk", window);
     sf::Clock clock;
@@ -20,7 +22,11 @@ int main() {
     //Link Level to Player
     player.setLevel(level);
     //Set player position of the start entity
-    player.setStartPosition(level.getStartPosition());
+    player.setStartPosition(level.getPlayerStartPosition());
+
+    //Do same with princess
+    princess.setLevel(level);
+    princess.setPosition(level.getPrincessPosition());
 
     //Deepseek fix
     // Reserve space to avoid reallocation
@@ -33,7 +39,7 @@ int main() {
     }
 
     //Debugging player start spawn point
-    sf::Vector2f startPos = level.getStartPosition();
+    sf::Vector2f startPos = level.getPlayerStartPosition();
     std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
     std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
 
@@ -65,6 +71,9 @@ int main() {
 
         player.update(deltaTime);
         player.draw(window);
+
+        princess.update(deltaTime);
+        princess.draw(window);
 
         for (auto& enemy : enemies) {
             enemy.update(deltaTime);

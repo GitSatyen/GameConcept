@@ -9,7 +9,8 @@ class Level
 public:
 
 	ldtk::Project loadProject(const std::string& filepath);
-	sf::Vector2f getStartPosition() const;
+	sf::Vector2f getPlayerStartPosition() const;
+	sf::Vector2f getPrincessPosition() const; //Just a replica of getPlayerStartPosition()
 	Level(const std::string& filepath, sf::RenderWindow& window);
 	void draw(sf::RenderTarget& image);
 	void Resize(sf::RenderWindow& window);

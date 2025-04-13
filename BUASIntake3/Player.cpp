@@ -171,13 +171,15 @@ void Player::Movement(float deltaTime)
 	}	
 
 	Player::State currentState = getState();
+#ifndef NDEBUG
 	// Check state
 	if (currentState == Player::State::Idle) {
-		printf("Idle");
+		//printf("Idle");
 	}
 	else if (currentState == Player::State::Running) {
-		printf("Running");
+		//printf("Running");
 	}
+#endif 
 }
 
 void Player::doAnime(float deltaTime)

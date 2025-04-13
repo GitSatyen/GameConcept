@@ -32,15 +32,10 @@ ldtk::Project Level::loadProject(const std::string& filepath)
 		throw;
 	}
 
-	//Entitie layer
-	//const auto& entities = level.getLayer("Entities");
-	//const auto& startPos = entities.getEntitiesByName("Start")[0].get();
-	//playerStart = { startPos.getPosition().x, startPos.getPosition().y };
-
 	return proj;
 }
 
-sf::Vector2f Level::getStartPosition() const
+sf::Vector2f Level::getPlayerStartPosition() const
 {
 	try {
 		const auto& entities = level.getLayer("Objects");
@@ -50,6 +45,27 @@ sf::Vector2f Level::getStartPosition() const
 			const auto& startPos = startEntities[0].get();
 			return sf::Vector2f(startPos.getPosition().x + startPos.getSize().x / 2.0f,
 								startPos.getPosition().y + startPos.getSize().y / 2.0f);
+		}
+		return sf::Vector2f(baseWidth / 2, baseHeight / 2);
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Couldnt find startEntity" << e.what() << "\n";
+		throw;
+	}
+
+	return sf::Vector2f(baseWidth / 2, baseHeight / 2);
+}
+
+sf::Vector2f Level::getPrincessPosition() const
+{
+	try {
+		const auto& entities = level.getLayer("Objects");
+		const auto& startEntities = entities.getEntitiesByName("Princess");
+
+		if (!startEntities.empty()) {
+			const auto& startPos = startEntities[0].get();
+			return sf::Vector2f(startPos.getPosition().x + startPos.getSize().x / 2.0f,
+				startPos.getPosition().y + startPos.getSize().y / 2.0f);
 		}
 		return sf::Vector2f(baseWidth / 2, baseHeight / 2);
 	}
