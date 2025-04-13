@@ -38,7 +38,7 @@ private:
 	sf::Vector2f targetPosition;
 	sf::Vector2f velocity;
 	int tileSize = 32;
-	float scale;
+	float scale = 16.0f / 32.0f;
 	float frameTime;
 	float speed = 100.0f;
 };
