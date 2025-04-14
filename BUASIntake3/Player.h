@@ -48,6 +48,9 @@ public:
 	sf::FloatRect getCollider() const;
 	bool checkCollsion(const sf::FloatRect& rect);
 
+	std::vector<sf::Vector2f> getAnchorPoints() const; 
+	bool checkAnchorCollision(const sf::FloatRect& rect);
+
 private:
 	//Pointer Level class
 	const Level* level = nullptr;

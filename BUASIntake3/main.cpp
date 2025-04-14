@@ -1,5 +1,5 @@
 #include <fstream>
-#include <iostream>  // For std::cerr and std::cout
+#include <iostream> 
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "Level.h"
@@ -19,7 +19,9 @@ int main() {
     sf::Clock clock;
     bool isFullscreen = false;
 
-    //Link Level to Player
+    // Pass references to the Level
+    level.setPlayer(&player);
+    level.setPrincess(&princess);
     player.setLevel(level);
     //Set player position of the start entity
     player.setStartPosition(level.getPlayerStartPosition());
@@ -79,6 +81,7 @@ int main() {
             enemy.update(deltaTime);
             enemy.draw(window);
         }
+        level.updateCollision(deltaTime);
 
         // Reset view for UI elements if needed
         window.setView(window.getDefaultView());

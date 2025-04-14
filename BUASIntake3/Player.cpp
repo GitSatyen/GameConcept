@@ -2,6 +2,7 @@
 #include "Level.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
+#include <vector>
 
 
 std::map <Player::State, std::string> stateMap = {
@@ -94,6 +95,15 @@ void Player::draw(sf::RenderTarget& image)
 	rect.setOutlineColor(sf::Color::Red);
 	rect.setOutlineThickness(2.0f);
 	image.draw(rect);
+
+	// Draw anchor points
+	std::vector<sf::Vector2f> anchors = getAnchorPoints();
+	for (const auto& anchor : anchors) {
+		sf::CircleShape point(3.0f); // Radius of 3 pixels
+		point.setFillColor(sf::Color::Yellow);
+		point.setPosition(anchor.x - 3.0f, anchor.y - 3.0f); // Center the circle
+		image.draw(point);
+	}
 #endif // !NDEBUG
 
 }
@@ -317,4 +327,32 @@ sf::FloatRect Player::getCollider() const
 bool Player::checkCollsion(const sf::FloatRect& rect)
 {
 	return getCollider().intersects(rect);
+}
+
+std::vector<sf::Vector2f> Player::getAnchorPoints() const
+{
+	sf::FloatRect collider = getCollider();
+	std::vector<sf::Vector2f> anchors;
+
+	//Deepseek solution
+	// Calculate anchor points at the four conrners
+	anchors.emplace_back(collider.left, collider.top);                     // Top-left
+	anchors.emplace_back(collider.left + collider.width, collider.top);    // Top-right
+	anchors.emplace_back(collider.left, collider.top + collider.height);   // Bottom-left
+	anchors.emplace_back(collider.left + collider.width, collider.top + collider.height); // Bottom-right
+	
+	return anchors;
+}
+
+bool Player::checkAnchorCollision(const sf::FloatRect& rect)
+{
+	int collidingAnchors = 0;
+
+	for (const auto& anchor : getAnchorPoints()) {
+		if (rect.contains(anchor)) {
+			collidingAnchors++;
+			if (collidingAnchors >= 2) return true;
+		}
+	}
+	return false;
 }

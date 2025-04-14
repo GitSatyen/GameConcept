@@ -58,6 +58,17 @@ void Princess::setState(State newState)
 void Princess::draw(sf::RenderTarget& image)
 {
 	image.draw(sprite);
+
+#ifndef NDEBUG
+	// Draw collider 
+	sf::FloatRect collider = getCollider();
+	sf::RectangleShape rect(sf::Vector2f(collider.width, collider.height));
+	rect.setPosition(collider.left, collider.top);
+	rect.setFillColor(sf::Color::Transparent);
+	rect.setOutlineColor(sf::Color::Black);
+	rect.setOutlineThickness(2.0f);
+	image.draw(rect);
+#endif
 }
 
 void Princess::update(float deltaTime)

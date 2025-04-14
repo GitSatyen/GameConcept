@@ -4,6 +4,10 @@
 #include "SFML/Graphics.hpp"
 #include <vector>
 
+// Forward declarations for faster initialization   
+class Player;
+class Princess;
+
 class Level
 {
 public:
@@ -26,10 +30,16 @@ public:
 
 	const std::vector<sf::Vector2f>& getEnemyPositions() const { return enemyPositions; }
 
+	void setPlayer(Player* playerRef);
+	void setPrincess(Princess* princessRef);
+	void updateCollision(float deltaTime);
+
 private:
 	ldtk::Project project;
 	const ldtk::World& world; //Using pointers because World can't be default contructed
 	const ldtk::Level& level; //Using pointers because Level can't be default contructed
+	Player* player = nullptr;
+	Princess* princess = nullptr;
 
 	std::vector<sf::Vector2f> enemyPositions;
 	

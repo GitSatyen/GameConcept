@@ -1,5 +1,6 @@
 #include "Level.h"
 #include "Player.h"
+#include "Princess.h"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include <filesystem>
@@ -292,5 +293,27 @@ sf::Vector2i Level::getGridSize() const
 	catch (const std::exception& e) {
 		std::cerr << "Error getting grid size: " << e.what() << "\n";
 		return sf::Vector2i(0, 0);
+	}
+}
+
+void Level::setPlayer(Player* playerRef)
+{
+	player = playerRef;
+}
+
+void Level::setPrincess(Princess* princessRef)
+{
+	princess = princessRef;
+}
+
+
+void Level::updateCollision(float deltaTime)
+{
+	//Princess collision
+	if (player && princess) {
+		bool collsion = player->checkCollsion(princess->getCollider());
+		if (collsion) {
+			std::cout << "Princess saved!\n";
+		}
 	}
 }
