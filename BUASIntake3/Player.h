@@ -45,6 +45,9 @@ public:
 	void setLevel(const Level& levelRef);
 	sf::Vector2i getGridPosition() const;
 
+	sf::FloatRect getCollider() const;
+	bool checkCollsion(const sf::FloatRect& rect);
+
 private:
 	//Pointer Level class
 	const Level* level = nullptr;
@@ -74,4 +77,5 @@ private:
 	const float scale = 16.0f / 32.0f;
 	float frameTime;
 	float speed = 100.0f;
+	
 };

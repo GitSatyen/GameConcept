@@ -99,3 +99,19 @@ void Princess::setLevel(const Level& levelRef)
 {
 	tileSize = levelRef.getWalkingGroundCellSize();
 }
+
+sf::FloatRect Princess::getCollider() const
+{
+	// Custom collider dimensions (adjust these to match your sprite)
+	const float colliderWidth = 32.0f;
+	const float colliderHeight = 32.0f;
+
+	// Calculate position based on sprite's center and origin offset
+	sf::Vector2f position = sprite.getPosition();
+	return sf::FloatRect(
+		position.x - colliderWidth / 2,        // X position
+		position.y - colliderHeight / 2,       // Y position (matches origin offset)
+		colliderWidth,                         // Width
+		colliderHeight                         // Height
+	);
+}

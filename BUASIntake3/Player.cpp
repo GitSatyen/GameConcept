@@ -84,6 +84,18 @@ void Player::draw(sf::RenderTarget& image)
 	case State::Dead:
 		image.draw(sprite);
 	}
+
+#ifndef NDEBUG
+	// Draw collider 
+	sf::FloatRect collider = getCollider();
+	sf::RectangleShape rect(sf::Vector2f(collider.width, collider.height));
+	rect.setPosition(collider.left, collider.top);
+	rect.setFillColor(sf::Color::Transparent);
+	rect.setOutlineColor(sf::Color::Red);
+	rect.setOutlineThickness(2.0f);
+	image.draw(rect);
+#endif // !NDEBUG
+
 }
 
 void Player::update(float deltaTime)
@@ -283,4 +295,26 @@ void Player::setLevel(const Level& levelRef)
 sf::Vector2i Player::getGridPosition() const
 {
 	return gridPosition;
+}
+
+sf::FloatRect Player::getCollider() const
+{
+	//Deepseek solution
+	// Custom collider dimensions (adjust these to match your sprite)
+	const float colliderWidth = 32.0f;
+	const float colliderHeight = 32.0f;
+
+	// Calculate position based on sprite's center and origin offset
+	sf::Vector2f position = sprite.getPosition();
+	return sf::FloatRect(
+		position.x - colliderWidth / 2,        // X position
+		position.y - colliderHeight / 2,       // Y position (matches origin offset)
+		colliderWidth,                         // Width
+		colliderHeight                         // Height
+	);
+}
+
+bool Player::checkCollsion(const sf::FloatRect& rect)
+{
+	return getCollider().intersects(rect);
 }

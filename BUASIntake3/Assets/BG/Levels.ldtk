@@ -466,22 +466,6 @@
 							"__worldY": 64
 						},
 						{
-							"__identifier": "Obstacle",
-							"__grid": [6,1],
-							"__pivot": [0,0],
-							"__tags": [],
-							"__tile": { "tilesetUid": 7, "x": 0, "y": 0, "w": 32, "h": 32 },
-							"__smartColor": "#BE4A2F",
-							"iid": "dda5edc0-e920-11ef-869b-9fb5f5eee89b",
-							"width": 32,
-							"height": 32,
-							"defUid": 4,
-							"px": [192,32],
-							"fieldInstances": [],
-							"__worldX": 192,
-							"__worldY": 32
-						},
-						{
 							"__identifier": "Princess",
 							"__grid": [7,0],
 							"__pivot": [0,0],

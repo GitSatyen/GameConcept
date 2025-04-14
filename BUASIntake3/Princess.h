@@ -27,6 +27,9 @@ public:
 	void setPosition(const sf::Vector2f& position);
 	void setLevel(const Level& levelRef);
 
+	sf::FloatRect getCollider() const;
+	bool checkCollsion(const sf::FloatRect& rect);
+
 private:
 	State state = State::None;
 

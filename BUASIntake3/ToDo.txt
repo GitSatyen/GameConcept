@@ -1,9 +1,6 @@
 TO DO
 
-Place the princess at the end of the level:
-	-Make the princess spawn in the level
-	-Animate the princess
-->
+
 Add Winning condition:
 	-Add collision box around the player and princess (enmey to)
 	-Player wins when colliding with the princess
