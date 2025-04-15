@@ -142,6 +142,12 @@ void Player::update(float deltaTime)
 
 void Player::Movement(float deltaTime)
 {
+	//Prevent player from moving when he has won
+	if (levelRef && levelRef->hasWon) {
+		isMoving = false;
+		return;
+	}
+
 	if (!keyProcessed) {
 		sf::Vector2i newGridPosition = gridPosition;
 		bool moved = false;
@@ -298,6 +304,7 @@ void Player::setGridPosition(int x, int y)
 void Player::setLevel(const Level& levelRef)
 {
 	//Deepseek solution
+	this->levelRef = const_cast<Level*>(&levelRef);
 	level = &levelRef;
 	tileSize = level->getWalkingGroundCellSize();
 }

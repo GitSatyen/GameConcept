@@ -1,9 +1,8 @@
 TO DO
 
 Add Winning condition:
-	-Add collision box around the player and princess (enmey to)
+	-Add collision box around the player and enemey
 	-Player wins when colliding with the princess
-	-A text should pop up telling the player has won
 	-Clear the image and display the next level
 ->
 Create dead functionallity player:

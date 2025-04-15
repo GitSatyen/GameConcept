@@ -85,6 +85,10 @@ int main() {
 
         // Reset view for UI elements if needed
         window.setView(window.getDefaultView());
+
+        if (level.hasWon) {
+            level.WonGame(window);
+        }
         window.display();
     }
     return 0;

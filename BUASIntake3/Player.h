@@ -54,6 +54,7 @@ public:
 private:
 	//Pointer Level class
 	const Level* level = nullptr;
+	Level* levelRef = nullptr; //Modiviable value
 
 	State state = State::None;
 
@@ -74,6 +75,7 @@ private:
 
 	bool keyProcessed = false;
 	bool isMoving = false;
+	bool canMove = true;
 
 	int tileSize;
 	int hp = 4;

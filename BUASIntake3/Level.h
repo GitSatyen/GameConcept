@@ -33,6 +33,9 @@ public:
 	void setPlayer(Player* playerRef);
 	void setPrincess(Princess* princessRef);
 	void updateCollision(float deltaTime);
+	void WonGame(sf::RenderTarget& window);
+
+	bool hasWon;
 
 private:
 	ldtk::Project project;
@@ -43,6 +46,8 @@ private:
 
 	std::vector<sf::Vector2f> enemyPositions;
 	
+	sf::Font font;
+	sf::Text text;
 	sf::Sprite tile_sprite;
 	sf::Texture tileset_texture;
 	sf::View gameView;

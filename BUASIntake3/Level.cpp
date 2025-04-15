@@ -82,7 +82,8 @@ sf::Vector2f Level::getPrincessPosition() const
 Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	project(loadProject(filepath)),
 	world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
-	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0])
+	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0]),
+	hasWon(false)
 {
 	//Get level dimensions
 	baseWidth = level.size.x;
@@ -94,6 +95,11 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 
 	std::cout << "World name: " << world.getName() << "\n";
 	std::cout << "Level name: " << level.name << ", ID: " << level.iid << "\n";
+
+	//Load Font
+	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
+		std::cout << "ERROR: Couldn't load victory font\n";
+	}
 
 	//Load tileset
 	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {
@@ -313,7 +319,40 @@ void Level::updateCollision(float deltaTime)
 	if (player && princess) {
 		bool collsion = player->checkCollsion(princess->getCollider());
 		if (collsion) {
-			std::cout << "Princess saved!\n";
+			hasWon = true;
+			//std::cout << "Princess saved!\n";
 		}
 	}
+}
+
+void Level::WonGame(sf::RenderTarget& window)
+{
+	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
+	{
+		std::cerr << "Font not found\n";
+		return;
+	}
+
+	std::cout << "You win!\n";
+	text.setFont(font);
+	text.setString("You win!");
+	text.setCharacterSize(48);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Bold);
+
+	// Center the text in the view
+	sf::Vector2f winCenter = window.getView().getCenter();
+	text.setPosition(winCenter.x - 100, winCenter.y);
+#ifndef NDEGUG
+	std::cout << "Text position: " << text.getPosition().x
+		<< ", " << text.getPosition().y << "\n";
+#endif // !NDEGUG
+
+	// Draw semi-transparent background
+	sf::RectangleShape background(window.getView().getSize());
+	background.setFillColor(sf::Color(0, 0, 0, 200));  // Semi-transparent black
+	window.draw(background);
+
+	// Draw the text
+	window.draw(text);
 }
