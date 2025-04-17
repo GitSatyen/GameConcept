@@ -31,6 +31,8 @@ public:
 	void setPosition(const sf::Vector2f& position);
 	void setLevel(const Level& levelRef); 
 
+	sf::FloatRect getCollider() const; //Replica from Princess class
+
 private:
 	State state = State::None;
 

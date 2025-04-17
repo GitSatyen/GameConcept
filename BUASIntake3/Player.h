@@ -78,7 +78,7 @@ private:
 	bool canMove = true;
 
 	int tileSize;
-	int hp = 4;
+	int turns = 4;
 	const float scale = 16.0f / 32.0f;
 	float frameTime;
 	float speed = 100.0f;

@@ -90,13 +90,13 @@ void Princess::update(float deltaTime)
 	const int totalFrames = 4;
 	const int frameHeight = 128; //Deepseek solution
 
-	printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
+	/*printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
 	printf("Frame: %d, Texture Rect: (%d, %d, %d, %d)\n",
 		sourceImage.x,
 		sourceImage.x * frameWidth,
 		0,
 		frameWidth,
-		frameHeight);
+		frameHeight);*/
 #endif
 }
 

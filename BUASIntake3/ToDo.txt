@@ -1,16 +1,22 @@
 TO DO
 
-Add Winning condition:
-	-Add collision box around the player and enemey
-	-Player wins when colliding with the princess
-	-Clear the image and display the next level
-->
 Create dead functionallity player:
 	-Let the player die after the step counter reaches 0
 	-Let the animation play
 	-Restart the level
+->
+Make the player attack:
+	-Player should do attack anim before moving on the next grid
+	-Enemy should play dead anim and be removed
+	-This takes a turn of the player
 -> Add pause to menu to quit or restart
 -> Add restart while playing:
 	-Make the level restart when player presses R
 	-Display text underneath the level to restart with R
+
+**If evertyhing is implemented
+Add more Levels:
+	-Create more levels and parse them in
+	-Clear the image and display the next level
+
 	

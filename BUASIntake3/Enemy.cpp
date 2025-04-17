@@ -64,6 +64,17 @@ void Enemy::setState(State newState)
 void Enemy::draw(sf::RenderTarget& image)
 {
 	image.draw(sprite);
+
+#ifndef NDEBUG
+	// Draw collider 
+	sf::FloatRect collider = getCollider();
+	sf::RectangleShape rect(sf::Vector2f(collider.width, collider.height));
+	rect.setPosition(collider.left, collider.top);
+	rect.setFillColor(sf::Color::Transparent);
+	rect.setOutlineColor(sf::Color::Black);
+	rect.setOutlineThickness(2.0f);
+	image.draw(rect);
+#endif
 }
 
 void Enemy::update(float deltaTime)
@@ -121,5 +132,21 @@ void Enemy::setPosition(const sf::Vector2f& position)
 void Enemy::setLevel(const Level& levelRef)
 {
 	tileSize = levelRef.getWalkingGroundCellSize();
+}
+
+sf::FloatRect Enemy::getCollider() const
+{
+	// Custom collider dimensions (adjust these to match your sprite)
+	const float colliderWidth = 32.0f;
+	const float colliderHeight = 32.0f;
+	
+	// Calculate position based on sprite's center
+	sf::Vector2f position = sprite.getPosition();
+	return sf::FloatRect(
+		position.x - colliderWidth,  // X position
+		position.y - colliderHeight, // Y position
+		colliderWidth,                   // Width
+		colliderHeight                   // Height
+	);
 }
 

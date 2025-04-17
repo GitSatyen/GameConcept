@@ -7,6 +7,7 @@
 // Forward declarations for faster initialization   
 class Player;
 class Princess;
+class Enemy;
 
 class Level
 {
@@ -32,6 +33,7 @@ public:
 
 	void setPlayer(Player* playerRef);
 	void setPrincess(Princess* princessRef);
+	void setEnemy(Enemy* EnemyRef);
 	void updateCollision(float deltaTime);
 	void WonGame(sf::RenderTarget& window);
 
@@ -43,6 +45,7 @@ private:
 	const ldtk::Level& level; //Using pointers because Level can't be default contructed
 	Player* player = nullptr;
 	Princess* princess = nullptr;
+	std::vector<Enemy*> enemies;
 
 	std::vector<sf::Vector2f> enemyPositions;
 	

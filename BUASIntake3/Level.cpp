@@ -1,6 +1,7 @@
 #include "Level.h"
 #include "Player.h"
 #include "Princess.h"
+#include "Enemy.h"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include <filesystem>
@@ -312,15 +313,32 @@ void Level::setPrincess(Princess* princessRef)
 	princess = princessRef;
 }
 
+void Level::setEnemy(Enemy* EnemyRef)
+{
+	enemies.push_back(EnemyRef);
+}
+
 
 void Level::updateCollision(float deltaTime)
 {
-	//Princess collision
+	//When colliding with Princess
 	if (player && princess) {
-		bool collsion = player->checkCollsion(princess->getCollider());
-		if (collsion) {
+		bool coll_With_Princess = player->checkCollsion(princess->getCollider());
+		if (coll_With_Princess) {
 			hasWon = true;
 			//std::cout << "Princess saved!\n";
+		}
+	}
+
+	//When colliding with an Enemy
+	if (player) {
+		for (Enemy* enemy : enemies) {
+			if (enemy) {
+				bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
+				if (coll_With_Enemy) {
+					std::cout << "Collding with Enemy\n";
+				}
+			}
 		}
 	}
 }

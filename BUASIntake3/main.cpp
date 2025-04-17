@@ -19,9 +19,17 @@ int main() {
     sf::Clock clock;
     bool isFullscreen = false;
 
-    // Pass references to the Level
+    // Pass references to the Level (containing collission logic)
     level.setPlayer(&player);
     level.setPrincess(&princess);
+
+   /* for (auto& enemy : enemies) {
+            level.setEnemy(&enemy);
+            enemy.update(deltaTime);
+            enemy.draw(window);
+        }*/
+
+    // Pass Level to the Player (containing movement logic)
     player.setLevel(level);
     //Set player position of the start entity
     player.setStartPosition(level.getPlayerStartPosition());
@@ -35,9 +43,10 @@ int main() {
     enemies.reserve(level.getEnemyPositions().size());
     //Set positions of enemies
     for (const auto& pos : level.getEnemyPositions()) {
-        enemies.emplace_back(); // Calls Enemy() constructor
-        enemies.back().setPosition(pos); // Set position after creation
+        enemies.emplace_back();
+        enemies.back().setPosition(pos);
         enemies.back().setLevel(level);
+        level.setEnemy(&enemies.back()); // <-- Add this line
     }
 
     //Debugging player start spawn point
@@ -81,6 +90,9 @@ int main() {
             enemy.update(deltaTime);
             enemy.draw(window);
         }
+
+        
+
         level.updateCollision(deltaTime);
 
         // Reset view for UI elements if needed

@@ -353,10 +353,15 @@ std::vector<sf::Vector2f> Player::getAnchorPoints() const
 
 bool Player::checkAnchorCollision(const sf::FloatRect& rect)
 {
+	const float padding = 5.0f;
 	int collidingAnchors = 0;
 
 	for (const auto& anchor : getAnchorPoints()) {
-		if (rect.contains(anchor)) {
+		// Create a small rectangle around each anchor point
+		sf::FloatRect anchorRect(anchor.x - padding / 2,
+			anchor.y - padding / 2,	padding,padding);
+		
+		if (rect.intersects(anchorRect)) {
 			collidingAnchors++;
 			if (collidingAnchors >= 2) return true;
 		}
