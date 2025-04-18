@@ -27,6 +27,12 @@ Player::Player() : tileSize(32)
 	if (!RunAnim.loadFromFile("Assets/Player/Walk.png")) {
 		printf("Failed to load sprite texture\n");
 	}
+	if (!AttackAnim.loadFromFile("Assets/Player/Attack_3.png")) {
+		printf("Failed to load sprite texture\n");
+	}
+	if (!DeadAnim.loadFromFile("Assets/Player/Dead.png")) {
+		printf("Failed to load sprite texture\n");
+	}
 
 	else {
 		printf("Sprite Found\n");
@@ -60,6 +66,9 @@ void Player::setState(State newState)
 		case State::Running:
 			sprite.setTexture(RunAnim);
 			break;
+		case State::Attack:
+			sprite.setTexture(AttackAnim);
+			break;
 		case State::Hurt:
 			break;
 		case State::Dead:
@@ -77,6 +86,9 @@ void Player::draw(sf::RenderTarget& image)
 		image.draw(sprite);
 		break;
 	case State::Running:
+		image.draw(sprite);
+		break;
+	case State::Attack:
 		image.draw(sprite);
 		break;
 	case State::Hurt:
@@ -132,10 +144,24 @@ void Player::update(float deltaTime)
 		}
 	}
 
+	if (turns < 1) {
+		isDead = true;
+	}
+
+	if (isDead) {
+		setState(State::Dead);
+		doDead(deltaTime);
+	}
+
 	//Tranistion to idle when movement is finished
 	if (!isMoving && state != State::Idle) {
 		setState(State::Idle);
 	}
+
+	//Tranistion to idle when attack is finished
+	/*if (!isAttacking && state != State::Idle) {
+		setState(State::Idle);
+	}*/
 
 	doAnime(deltaTime);
 }
@@ -186,6 +212,7 @@ void Player::Movement(float deltaTime)
 			isMoving = true;
 			keyProcessed = true;
 			setState(State::Running);
+			turns--;
 		}
 	}
 	//Deepseek solution
@@ -206,6 +233,23 @@ void Player::Movement(float deltaTime)
 	}
 	else if (currentState == Player::State::Running) {
 		//printf("Running");
+	}
+#endif 
+}
+
+void Player::Attack(float deltaTime)
+{
+	setState(State::Attack);
+	turns--;
+
+	Player::State currentState = getState();
+#ifndef NDEBUG
+	// Check state
+	if (currentState == Player::State::Idle) {
+		printf("Idle");
+	}
+	else if (currentState == Player::State::Running) {
+		printf("Attacking");
 	}
 #endif 
 }
@@ -265,6 +309,18 @@ void Player::doRunning(float deltaTime)
 
 void Player::doAttack(float deltaTime)
 {
+	//Animate player sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		sourceImage.x++;
+		// Check sprite sheet width
+		if (sourceImage.x * 128 >= AttackAnim.getSize().x) {
+			sourceImage.x = 0;
+		}
+		//Draw first frame of the spritesheet
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		frameTime = 0.0f;
+	}
 }
 
 void Player::doHurt(float deltaTime)
@@ -273,6 +329,18 @@ void Player::doHurt(float deltaTime)
 
 void Player::doDead(float deltaTime)
 {
+	//Animate player sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		sourceImage.x++;
+		// Check sprite sheet width
+		if (sourceImage.x * 128 >= DeadAnim.getSize().x) {
+			sourceImage.x = 0;
+		}
+		//Draw first frame of the spritesheet
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		frameTime = 0.0f;
+	}
 }
 
 void Player::setStartPosition(const sf::Vector2f& position)

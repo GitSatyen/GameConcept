@@ -84,7 +84,8 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	project(loadProject(filepath)),
 	world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
 	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0]),
-	hasWon(false)
+	hasWon(false),
+	hasLost(false)
 {
 	//Get level dimensions
 	baseWidth = level.size.x;
@@ -341,9 +342,63 @@ void Level::updateCollision(float deltaTime)
 			}
 		}
 	}
+
+	//Check if player has no more turns
+	if (player && player->turns <= 0) {
+		hasLost = true;
+	}
 }
 
-void Level::WonGame(sf::RenderTarget& window)
+void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)
+{
+	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
+	{
+		std::cerr << "Font not found\n";
+		return;
+	}
+
+	std::cout << player->turns;
+	text.setFont(font);
+	text.setString("Turns: " + std::to_string(countdown));
+	text.setCharacterSize(12);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Bold);
+
+	// Center the text in the view
+	text.setString("Turns: " + std::to_string(countdown));
+	sf::Vector2f viewTopLeft = window.getView().getCenter() - window.getView().getSize() / 2.0f;
+	text.setPosition(viewTopLeft.x + 10, viewTopLeft.y + 10);
+	window.draw(text);
+}
+
+
+
+void Level::resetGameState()
+{
+	hasWon = false;
+	hasLost = false;
+
+	// Reset player
+	if (player) {
+		player->setStartPosition(getPlayerStartPosition());
+		player->turns = 4;
+		player->setState(Player::State::Idle);
+	}
+
+	// Reset enemies
+	//Deepseek fix
+	for (size_t i = 0; i < enemies.size() && i < enemyPositions.size(); i++) {
+		if (enemies[i]) {
+			enemies[i]->setPosition(enemyPositions[i]);
+		}
+	}
+}
+
+void Level::resetPlayerAndEnemies()
+{
+}
+
+void Level::gameWon(sf::RenderTarget& window)
 {
 	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
 	{
@@ -372,5 +427,26 @@ void Level::WonGame(sf::RenderTarget& window)
 	window.draw(background);
 
 	// Draw the text
+	window.draw(text);
+}
+
+void Level::gameOver(sf::RenderWindow& window)
+{
+	text.setFont(font);
+	text.setString("Game Over!\nPress R to Restart\nQ to Quit");
+	text.setCharacterSize(24);
+	text.setFillColor(sf::Color::Red);
+	text.setStyle(sf::Text::Bold);
+
+	// Center text
+	sf::FloatRect textBounds = text.getLocalBounds();
+	text.setOrigin(textBounds.width / 2, textBounds.height / 2);
+	text.setPosition(window.getView().getCenter());
+
+	// Draw transparent background
+	sf::RectangleShape background(window.getView().getSize());
+	background.setFillColor(sf::Color(0, 0, 0, 200));
+	window.draw(background);
+
 	window.draw(text);
 }

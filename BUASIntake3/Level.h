@@ -34,10 +34,19 @@ public:
 	void setPlayer(Player* playerRef);
 	void setPrincess(Princess* princessRef);
 	void setEnemy(Enemy* EnemyRef);
+
 	void updateCollision(float deltaTime);
-	void WonGame(sf::RenderTarget& window);
+	void playerTurnCountDown(sf::RenderTarget& window, int countdown);
+
+	void gameWon(sf::RenderTarget& window);
+	void gameOver(sf::RenderWindow& window);
+
+	void resetGameState();
+	void resetPlayerAndEnemies();
 
 	bool hasWon;
+	bool hasLost;
+	bool reset = false;
 
 private:
 	ldtk::Project project;

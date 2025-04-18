@@ -31,6 +31,7 @@ public:
 	void draw(sf::RenderTarget& image);
 	void update(float deltaTime);
 	void Movement(float deltaTime);
+	void Attack(float deltaTime);
 
 	void doAnime(float deltaTime);
 	void doIdle(float deltaTime);
@@ -51,6 +52,7 @@ public:
 	std::vector<sf::Vector2f> getAnchorPoints() const; 
 	bool checkAnchorCollision(const sf::FloatRect& rect);
 
+	uint32_t turns = 4; //Experimental unsigned int. Value should not be negative
 private:
 	//Pointer Level class
 	const Level* level = nullptr;
@@ -60,7 +62,7 @@ private:
 
 	sf::Texture IdleAnim;
 	sf::Texture RunAnim;
-	sf::Texture JumpAnim;
+	sf::Texture AttackAnim;
 	sf::Texture FallAnim;
 	sf::Texture HurtAnim;
 	sf::Texture DeadAnim;
@@ -75,10 +77,11 @@ private:
 
 	bool keyProcessed = false;
 	bool isMoving = false;
+	bool isAttacking = false;
+	bool isDead = false;
 	bool canMove = true;
 
 	int tileSize;
-	int turns = 4;
 	const float scale = 16.0f / 32.0f;
 	float frameTime;
 	float speed = 100.0f;

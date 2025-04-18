@@ -23,12 +23,6 @@ int main() {
     level.setPlayer(&player);
     level.setPrincess(&princess);
 
-   /* for (auto& enemy : enemies) {
-            level.setEnemy(&enemy);
-            enemy.update(deltaTime);
-            enemy.draw(window);
-        }*/
-
     // Pass Level to the Player (containing movement logic)
     player.setLevel(level);
     //Set player position of the start entity
@@ -46,13 +40,26 @@ int main() {
         enemies.emplace_back();
         enemies.back().setPosition(pos);
         enemies.back().setLevel(level);
-        level.setEnemy(&enemies.back()); // <-- Add this line
+        level.setEnemy(&enemies.back());
     }
 
     //Debugging player start spawn point
     sf::Vector2f startPos = level.getPlayerStartPosition();
     std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
     std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
+
+    //Deepseek solution
+    // Initial game setup function
+    auto setupGame = [&]() {
+        level.resetGameState();
+        player.setStartPosition(level.getPlayerStartPosition());
+        princess.setPosition(level.getPrincessPosition());
+        // Reset enemies
+        for (size_t i = 0; i < level.getEnemyPositions().size(); i++) {
+            enemies[i].setPosition(level.getEnemyPositions()[i]);
+        }
+    };
+    setupGame();
 
     while (window.isOpen()) {
         sf::Event event;
@@ -61,6 +68,16 @@ int main() {
                 window.close();
             }
             else if (event.type == sf::Event::KeyPressed) {
+                //Handle game state transitions
+                if (level.hasWon || level.hasLost) {
+                    if (event.key.code == sf::Keyboard::R) {
+                        setupGame();
+                    }
+                    else if (event.key.code == sf::Keyboard::Q) {
+                        window.close();
+                    }
+                }
+                //Handle fulscreen mode
                 if (event.key.code == sf::Keyboard::F11) {
                     isFullscreen = !isFullscreen;
                     window.close();
@@ -75,9 +92,18 @@ int main() {
             }
         }
 
+        // Only update game logic if not in completed state
+        if (!level.hasWon && !level.hasLost) {
+            float deltaTime = clock.restart().asSeconds();
+            // Existing update code...
+            player.update(deltaTime);
+            level.updateCollision(deltaTime);
+        }
+
         float deltaTime = clock.restart().asSeconds();
         window.setView(level.getGameView());
         window.clear(sf::Color::Black);
+        //Draw map and objects
         level.draw(window);
 
         player.update(deltaTime);
@@ -91,15 +117,18 @@ int main() {
             enemy.draw(window);
         }
 
-        
-
+        //Initilize game functions
         level.updateCollision(deltaTime);
+        level.playerTurnCountDown(window, player.turns);
 
-        // Reset view for UI elements if needed
-        window.setView(window.getDefaultView());
+        // Always draw UI elements
+        level.playerTurnCountDown(window, player.turns);
 
         if (level.hasWon) {
-            level.WonGame(window);
+            level.gameWon(window);
+        }
+        else if (level.hasLost) {
+            level.gameOver(window);
         }
         window.display();
     }
