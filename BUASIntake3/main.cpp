@@ -92,35 +92,28 @@ int main() {
             }
         }
 
+        float deltaTime = clock.restart().asSeconds();
+        player.update(deltaTime); //Always has to updated
+
         // Only update game logic if not in completed state
         if (!level.hasWon && !level.hasLost) {
-            float deltaTime = clock.restart().asSeconds();
-            // Existing update code...
-            player.update(deltaTime);
+            // Update level collision
             level.updateCollision(deltaTime);
         }
 
-        float deltaTime = clock.restart().asSeconds();
         window.setView(level.getGameView());
         window.clear(sf::Color::Black);
         //Draw map and objects
         level.draw(window);
-
-        player.update(deltaTime);
         player.draw(window);
-
         princess.update(deltaTime);
         princess.draw(window);
-
         for (auto& enemy : enemies) {
             enemy.update(deltaTime);
             enemy.draw(window);
         }
 
         //Initilize game functions
-        level.updateCollision(deltaTime);
-        level.playerTurnCountDown(window, player.turns);
-
         // Always draw UI elements
         level.playerTurnCountDown(window, player.turns);
 
@@ -129,6 +122,7 @@ int main() {
         }
         else if (level.hasLost) {
             level.gameOver(window);
+            player.draw(window);
         }
         window.display();
     }

@@ -51,8 +51,16 @@ public:
 
 	std::vector<sf::Vector2f> getAnchorPoints() const; 
 	bool checkAnchorCollision(const sf::FloatRect& rect);
+	bool isDeathAnimationComplete() const { return deadAnimeFinished; }
 
-	uint32_t turns = 4; //Experimental unsigned int. Value should not be negative
+	//Public methods to refrence private variables
+	void resetAnimationFrame() { sourceImage.x = 0; }
+	void resetFrameTimer() { frameTime = 0.0f; }
+	
+	uint32_t turns = 30; //Experimental unsigned int. Value should not be negative
+	bool deadAnimeFinished = false;
+	bool isDead = false;
+
 private:
 	//Pointer Level class
 	const Level* level = nullptr;
@@ -67,7 +75,6 @@ private:
 	sf::Texture HurtAnim;
 	sf::Texture DeadAnim;
 	sf::Sprite sprite; // Empty sprite object (player object refrence)
-	
 
 	sf::Vector2i sourceImage;
 	sf::Clock clock;
@@ -78,8 +85,9 @@ private:
 	bool keyProcessed = false;
 	bool isMoving = false;
 	bool isAttacking = false;
-	bool isDead = false;
+	
 	bool canMove = true;
+	
 
 	int tileSize;
 	const float scale = 16.0f / 32.0f;

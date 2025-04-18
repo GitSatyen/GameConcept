@@ -57,6 +57,15 @@ void Player::setState(State newState)
 {
 	if (newState != state)
 	{
+		// Deepseek fix
+		// Reset animation frame data when transitioning to Idle
+		if (newState == State::Idle) {
+			sourceImage.x = 0; // Reset frame index
+			frameTime = 0.0f;  // Reset frame timer
+			sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, 
+											  sourceImage.y * 128, 128, 128));
+		}
+
 		switch (newState)
 		{
 		//Calls action when traniston away from state
@@ -72,6 +81,7 @@ void Player::setState(State newState)
 		case State::Hurt:
 			break;
 		case State::Dead:
+			sprite.setTexture(DeadAnim);
 			break;
 		}
 		state = newState;
@@ -154,14 +164,9 @@ void Player::update(float deltaTime)
 	}
 
 	//Tranistion to idle when movement is finished
-	if (!isMoving && state != State::Idle) {
+	if (!isMoving && state != State::Idle && !isDead) {
 		setState(State::Idle);
 	}
-
-	//Tranistion to idle when attack is finished
-	/*if (!isAttacking && state != State::Idle) {
-		setState(State::Idle);
-	}*/
 
 	doAnime(deltaTime);
 }
@@ -169,7 +174,7 @@ void Player::update(float deltaTime)
 void Player::Movement(float deltaTime)
 {
 	//Prevent player from moving when he has won
-	if (levelRef && levelRef->hasWon) {
+	if (levelRef && (levelRef->hasWon || levelRef->hasLost)) {
 		isMoving = false;
 		return;
 	}
@@ -330,12 +335,15 @@ void Player::doHurt(float deltaTime)
 void Player::doDead(float deltaTime)
 {
 	//Animate player sprite frame by frame
+	deadAnimeFinished = false;
 	frameTime += deltaTime;
 	if (frameTime >= 0.2f) {
 		sourceImage.x++;
 		// Check sprite sheet width
 		if (sourceImage.x * 128 >= DeadAnim.getSize().x) {
-			sourceImage.x = 0;
+			deadAnimeFinished = true;
+			//Stay on last frame
+			sourceImage.x--;
 		}
 		//Draw first frame of the spritesheet
 		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));

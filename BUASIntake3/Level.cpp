@@ -87,6 +87,11 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	hasWon(false),
 	hasLost(false)
 {
+	//Load Font
+	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
+		std::cout << "ERROR: Couldn't load victory font\n";
+	}
+
 	//Get level dimensions
 	baseWidth = level.size.x;
 	baseHeight = level.size.y;
@@ -97,11 +102,6 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 
 	std::cout << "World name: " << world.getName() << "\n";
 	std::cout << "Level name: " << level.name << ", ID: " << level.iid << "\n";
-
-	//Load Font
-	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
-		std::cout << "ERROR: Couldn't load victory font\n";
-	}
 
 	//Load tileset
 	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {
@@ -343,35 +343,39 @@ void Level::updateCollision(float deltaTime)
 		}
 	}
 
+	//First check if death animation completed
+	if (player && player->isDeathAnimationComplete()) {
+		hasLost = true;
+	}
+
 	//Check if player has no more turns
-	if (player && player->turns <= 0) {
+	if (player && player->turns <= 0) { 
+		player->isDead = true;
+		player->setState(Player::State::Dead);
+		hasLost = true;
+	}
+
+	//Check if death animation been has been completed
+	if (player && player->isDeathAnimationComplete()) {
 		hasLost = true;
 	}
 }
 
 void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)
 {
-	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
-	{
-		std::cerr << "Font not found\n";
-		return;
-	}
-
 	std::cout << player->turns;
 	text.setFont(font);
 	text.setString("Turns: " + std::to_string(countdown));
 	text.setCharacterSize(12);
 	text.setFillColor(sf::Color::White);
 	text.setStyle(sf::Text::Bold);
+	text.setOrigin(0, 0);
 
 	// Center the text in the view
-	text.setString("Turns: " + std::to_string(countdown));
 	sf::Vector2f viewTopLeft = window.getView().getCenter() - window.getView().getSize() / 2.0f;
 	text.setPosition(viewTopLeft.x + 10, viewTopLeft.y + 10);
 	window.draw(text);
 }
-
-
 
 void Level::resetGameState()
 {
@@ -380,22 +384,22 @@ void Level::resetGameState()
 
 	// Reset player
 	if (player) {
+		player->deadAnimeFinished = false;
+		player->isDead = false;
+		player->resetAnimationFrame();
+		player->resetFrameTimer();
 		player->setStartPosition(getPlayerStartPosition());
 		player->turns = 4;
 		player->setState(Player::State::Idle);
 	}
 
 	// Reset enemies
-	//Deepseek fix
+	// Deepseek fix
 	for (size_t i = 0; i < enemies.size() && i < enemyPositions.size(); i++) {
 		if (enemies[i]) {
 			enemies[i]->setPosition(enemyPositions[i]);
 		}
 	}
-}
-
-void Level::resetPlayerAndEnemies()
-{
 }
 
 void Level::gameWon(sf::RenderTarget& window)
