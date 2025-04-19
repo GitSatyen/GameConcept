@@ -57,7 +57,7 @@ public:
 	void resetAnimationFrame() { sourceImage.x = 0; }
 	void resetFrameTimer() { frameTime = 0.0f; }
 	
-	uint32_t turns = 30; //Experimental unsigned int. Value should not be negative
+	uint32_t turns; //Experimental unsigned int. Value should not be negative
 	bool deadAnimeFinished = false;
 	bool isDead = false;
 
@@ -82,12 +82,15 @@ private:
 	sf::Vector2f targetPosition;
 	sf::Vector2f velocity;
 
+	//Movement values
 	bool keyProcessed = false;
 	bool isMoving = false;
-	bool isAttacking = false;
-	
 	bool canMove = true;
-	
+
+	//Attacking values
+	bool isAttacking = false;
+	bool attackCompleted = false;
+	sf::Vector2i attackTargetGrid;
 
 	int tileSize;
 	const float scale = 16.0f / 32.0f;

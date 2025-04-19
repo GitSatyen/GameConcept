@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Level.h"
+#include "Enemy.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
 #include <vector>
@@ -132,7 +133,10 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
-	Movement(deltaTime);
+	//Make sure to handle movement only if not attacking
+	if (state != State::Attack) {
+		Movement(deltaTime);
+	}
 
 	//Player movement
 	if (isMoving) { //Deepseek solution
@@ -152,6 +156,30 @@ void Player::update(float deltaTime)
 			}
 			sprite.move(direction * speed * deltaTime);
 		}
+	}
+
+	// Only process movement if not attacking
+	if (state != State::Attack) {
+		doAttack(deltaTime);
+
+		//Check if attack animation completed
+		if (sourceImage.x >= AttackAnim.getSize().x / 128 - 1) {
+			attackCompleted = true;
+			isAttacking = false;
+			setState(State::Idle);
+		}
+	}
+	//^Deepseek fix^
+	if (state == State::Attack && attackCompleted) {
+		gridPosition = attackTargetGrid;
+		targetPosition = sf::Vector2f(
+			gridPosition.x * tileSize + tileSize / 2.0f,
+			gridPosition.y * tileSize + tileSize / 2.0f
+		);
+		isMoving = true;
+		attackCompleted = false;
+		isAttacking = false;
+		setState(State::Running);
 	}
 
 	if (turns < 1) {
@@ -209,15 +237,27 @@ void Player::Movement(float deltaTime)
 		}
 
 		if (moved && level && level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
-			targetPosition = sf::Vector2f(
-				newGridPosition.x * tileSize + tileSize / 2.0f,
-				newGridPosition.y * tileSize + tileSize / 2.0f
-			);
-			gridPosition = newGridPosition;
-			isMoving = true;
-			keyProcessed = true;
-			setState(State::Running);
-			turns--;
+			//Check for enemy FIRST before attacking
+			Enemy* targetEnemy = level->getEnemyAtGrid(newGridPosition.x, newGridPosition.y);
+
+			if (targetEnemy) {
+				// Initiate attack without moving
+				attackTargetGrid = newGridPosition;
+				setState(State::Attack);
+				isAttacking = true;
+				turns--;
+				targetEnemy->setState(Enemy::State::Dead);
+			}
+			else {
+				targetPosition = sf::Vector2f(
+					newGridPosition.x * tileSize + tileSize / 2.0f,
+					newGridPosition.y * tileSize + tileSize / 2.0f
+				);
+				gridPosition = newGridPosition;
+				isMoving = true;
+				keyProcessed = true;
+				setState(State::Running);
+			}
 		}
 	}
 	//Deepseek solution

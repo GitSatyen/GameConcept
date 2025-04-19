@@ -1,10 +1,5 @@
 TO DO
 
-Create dead functionallity player:
-	-Let the player die after the step counter reaches 0
-	-Let the animation play
-	-Restart the level
-->
 Make the player attack:
 	-Player should do attack anim before moving on the next grid
 	-Enemy should play dead anim and be removed

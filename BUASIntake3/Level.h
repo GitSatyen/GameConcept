@@ -30,6 +30,7 @@ public:
 	sf::Vector2i getGridSize() const;
 
 	const std::vector<sf::Vector2f>& getEnemyPositions() const { return enemyPositions; }
+	Enemy* getEnemyAtGrid(int gridX, int gridY) const;
 
 	void setPlayer(Player* playerRef);
 	void setPrincess(Princess* princessRef);
@@ -42,7 +43,6 @@ public:
 	void gameOver(sf::RenderWindow& window);
 
 	void resetGameState();
-	void resetPlayerAndEnemies();
 
 	bool hasWon;
 	bool hasLost;

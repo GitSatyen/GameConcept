@@ -27,11 +27,20 @@ public:
 
 	void draw(sf::RenderTarget& image);
 	void update(float deltaTime);
+
+	//Animations methods
 	void doAnime(float deltaTime);
+	void doIdle(float deltaTime);
+	void doHurt(float deltaTime);
+	void doDead(float deltaTime);
+
 	void setPosition(const sf::Vector2f& position);
 	void setLevel(const Level& levelRef); 
 
+	//Getter methods
 	sf::FloatRect getCollider() const; //Replica from Princess class
+	sf::Vector2i getGridPosition() const { return gridPosition; }
+	int getHP() const { return hp; }
 
 private:
 	State state = State::None;

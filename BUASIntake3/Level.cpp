@@ -304,6 +304,17 @@ sf::Vector2i Level::getGridSize() const
 	}
 }
 
+Enemy* Level::getEnemyAtGrid(int gridX, int gridY) const
+{
+	//Deepseek solution
+	for (Enemy* enemy : enemies) {
+		if (enemy && enemy->getGridPosition().x == gridX && enemy->getGridPosition().y == gridY) {
+			return enemy;
+		}
+	}
+	return nullptr;
+}
+
 void Level::setPlayer(Player* playerRef)
 {
 	player = playerRef;
@@ -359,6 +370,12 @@ void Level::updateCollision(float deltaTime)
 	if (player && player->isDeathAnimationComplete()) {
 		hasLost = true;
 	}
+
+	//Deepseek solution
+	//Remove dead enemies
+	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
+		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}),
+		enemies.end());
 }
 
 void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)
@@ -389,7 +406,7 @@ void Level::resetGameState()
 		player->resetAnimationFrame();
 		player->resetFrameTimer();
 		player->setStartPosition(getPlayerStartPosition());
-		player->turns = 4;
+		player->turns = 32;
 		player->setState(Player::State::Idle);
 	}
 

@@ -19,15 +19,24 @@ Enemy::Enemy()
 	//Define texture sprites for player sprite object 
 	if (!IdleAnim.loadFromFile("Assets/Enemy/Idle.png")) {
 		printf("Failed to load sprite texture\n");
-	}
-
-	else {
+	} else {
 		printf("Sprite Found\n");
 		IdleAnim.setSmooth(false);
 		//Place texture in sprite object
 		sprite.setTexture(IdleAnim);
 		sprite.setTextureRect(sf::IntRect(0, 0, 68, 64));
 		printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
+	}
+
+	if (!DeadAnim.loadFromFile("Assets/Enemy/Dead.png")) {
+		printf("Failed to load sprite texture\n");
+	} else {
+		printf("Sprite Found\n");
+		DeadAnim.setSmooth(false);
+		//Place texture in sprite object
+		sprite.setTexture(DeadAnim);
+		sprite.setTextureRect(sf::IntRect(0, 0, 68, 64));
+		printf("Texture Size: %dx%d\n", DeadAnim.getSize().x, DeadAnim.getSize().y);
 	}
 	
 	// Center the sprite origin
@@ -51,10 +60,12 @@ void Enemy::setState(State newState)
 		{
 		//Calls action when traniston away from state
 		case State::Idle:
+			sprite.setTexture(IdleAnim);
 			break;
 		case State::Hurt:
 			break;
 		case State::Dead:
+			sprite.setTexture(DeadAnim);
 			break;
 		}
 		state = newState;
@@ -79,6 +90,41 @@ void Enemy::draw(sf::RenderTarget& image)
 
 void Enemy::update(float deltaTime)
 {
+	if (state != State::Idle && state !=State::Dead) {
+		setState(State::Idle);
+		doIdle(deltaTime);
+	}
+	if (state == State::Dead) {
+		setState(State::Dead);
+		doDead(deltaTime);
+	}
+
+	const int frameWidth = 68;
+	const int totalFrames = 4;
+
+	doAnime(deltaTime);
+}
+
+void Enemy::doAnime(float deltaTime)
+{
+	const int frameWidth = 68;
+	const int totalFrames = 4;
+
+	switch (state)
+	{
+	case State::Idle:
+		doIdle(deltaTime);
+		break;
+	case State::Hurt:
+		break;
+	case State::Dead:
+		doDead(deltaTime);
+		break;
+	}
+}
+
+void Enemy::doIdle(float deltaTime)
+{
 	const int frameWidth = 68;
 	const int totalFrames = 4;
 
@@ -87,7 +133,7 @@ void Enemy::update(float deltaTime)
 	if (frameTime >= 0.2f) {
 		sourceImage.x = (sourceImage.x + 1) % totalFrames;
 		sprite.setTextureRect(sf::IntRect(
-		sourceImage.x * frameWidth,	0, frameWidth,64));
+			sourceImage.x * frameWidth, 0, frameWidth, 64));
 #ifndef NDEBUG
 		//printf("Current Frame (Enemy): %d\n", sourceImage.x);
 #endif
@@ -95,29 +141,29 @@ void Enemy::update(float deltaTime)
 	}
 }
 
-void Enemy::doAnime(float deltaTime)
+void Enemy::doDead(float deltaTime)
 {
-	/*switch (state)
-	{
-	case State::Idle:
-		IdleAnim.
-		break;
-	case State::Running:
-		doRunning(deltaTime);
-		break;
-	case State::Jumping:
-		doJumping(deltaTime);
-		break;
-	case State::Falling:
-		doFalling(deltaTime);
-		break;
-	case State::Hit:
-		doHit(deltaTime);
-		break;
-	case State::Dead:
-		doDead(deltaTime);
-		break;
-	}*/
+	const int frameWidth = 68;
+	const int totalFrames = DeadAnim.getSize().x / frameWidth;
+
+	//Animate sprite frame by frame
+	frameTime += deltaTime;
+	if (frameTime >= 0.2f) {
+		//Go through all frames except the last one
+		if (sourceImage.x < totalFrames - 1) {
+			sourceImage.x++;
+		}
+		// Update texture rectangle
+		sprite.setTextureRect(sf::IntRect(
+			sourceImage.x * frameWidth,	0,frameWidth,frameWidth));
+		frameTime = 0.0f;
+
+		if (sourceImage.x == 0) {
+			hp = 0;
+		}
+
+		frameTime = 0.0f;
+	}
 }
 
 void Enemy::setPosition(const sf::Vector2f& position)
@@ -127,6 +173,8 @@ void Enemy::setPosition(const sf::Vector2f& position)
 		position.y + tileSize / 2.0f
 	);
 	sprite.setPosition(centeredPos);
+	gridPosition.x = static_cast<int>(centeredPos.x / tileSize);
+	gridPosition.y = static_cast<int>(centeredPos.y / tileSize);
 }
 
 void Enemy::setLevel(const Level& levelRef)
