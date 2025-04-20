@@ -158,11 +158,9 @@ void Enemy::doDead(float deltaTime)
 			sourceImage.x * frameWidth,	0,frameWidth,frameWidth));
 		frameTime = 0.0f;
 
-		if (sourceImage.x == 0) {
+		if (sourceImage.x >= totalFrames - 1) {
 			hp = 0;
 		}
-
-		frameTime = 0.0f;
 	}
 }
 

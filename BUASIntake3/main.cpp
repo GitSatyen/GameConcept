@@ -68,12 +68,13 @@ int main() {
                 window.close();
             }
             else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::R) {
+                    setupGame();
+                }
                 //Handle game state transitions
                 if (level.hasWon || level.hasLost) {
-                    if (event.key.code == sf::Keyboard::R) {
-                        setupGame();
-                    }
-                    else if (event.key.code == sf::Keyboard::Q) {
+                    
+                    if (event.key.code == sf::Keyboard::Q) {
                         window.close();
                     }
                 }
@@ -93,8 +94,6 @@ int main() {
         }
 
         float deltaTime = clock.restart().asSeconds();
-        player.update(deltaTime); //Always has to updated
-
         // Only update game logic if not in completed state
         if (!level.hasWon && !level.hasLost) {
             // Update level collision
@@ -105,6 +104,7 @@ int main() {
         window.clear(sf::Color::Black);
         //Draw map and objects
         level.draw(window);
+        player.update(deltaTime);
         player.draw(window);
         princess.update(deltaTime);
         princess.draw(window);

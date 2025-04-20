@@ -58,13 +58,13 @@ void Player::setState(State newState)
 {
 	if (newState != state)
 	{
-		// Deepseek fix
+		// Grok fix
 		// Reset animation frame data when transitioning to Idle
-		if (newState == State::Idle) {
+		if (newState == State::Idle || newState == State::Attack) {
 			sourceImage.x = 0; // Reset frame index
 			frameTime = 0.0f;  // Reset frame timer
-			sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, 
-											  sourceImage.y * 128, 128, 128));
+			sprite.setTextureRect(sf::IntRect(sourceImage.x * 128,
+				sourceImage.y * 128, 128, 128));
 		}
 
 		switch (newState)
@@ -158,30 +158,37 @@ void Player::update(float deltaTime)
 		}
 	}
 
-	// Only process movement if not attacking
-	if (state != State::Attack) {
+	if (state == State::Attack) {
 		doAttack(deltaTime);
 
 		//Check if attack animation completed
 		if (sourceImage.x >= AttackAnim.getSize().x / 128 - 1) {
 			attackCompleted = true;
 			isAttacking = false;
-			setState(State::Idle);
+			//Grok solution
+			//Move to the target grid if no enemy remains
+			Enemy* targetEnemy = level->getEnemyAtGrid(attackTargetGrid.x, attackTargetGrid.y);
+			if (!targetEnemy || targetEnemy->getState() == Enemy::State::Dead) {
+				gridPosition = attackTargetGrid;
+				targetPosition = sf::Vector2f(
+					gridPosition.x * tileSize + tileSize / 2.0f,
+					gridPosition.y * tileSize + tileSize / 2.0f
+				);
+				//Prevent sliding off bounds by clamping targetPosition
+				float maxX = level->getLevel().size.x - tileSize / 2.0f;
+				float maxY = level->getLevel().size.y - tileSize / 2.0f;
+				targetPosition.x = std::max(tileSize / 2.0f, std::min(targetPosition.x, maxX));
+				targetPosition.y = std::max(tileSize / 2.0f, std::min(targetPosition.y, maxY));
+
+				std::cout << "Post-attack move to grid (" << gridPosition.x << ", " << gridPosition.y << ")\n";
+				std::cout << "Target position: (" << targetPosition.x << ", " << targetPosition.y << ")\n";
+				isMoving = true;
+				setState(State::Running);
+			}else {setState(State::Idle);}
+			attackCompleted = false;
 		}
 	}
-	//^Deepseek fix^
-	if (state == State::Attack && attackCompleted) {
-		gridPosition = attackTargetGrid;
-		targetPosition = sf::Vector2f(
-			gridPosition.x * tileSize + tileSize / 2.0f,
-			gridPosition.y * tileSize + tileSize / 2.0f
-		);
-		isMoving = true;
-		attackCompleted = false;
-		isAttacking = false;
-		setState(State::Running);
-	}
-
+	
 	if (turns < 1) {
 		isDead = true;
 	}
@@ -192,7 +199,7 @@ void Player::update(float deltaTime)
 	}
 
 	//Tranistion to idle when movement is finished
-	if (!isMoving && state != State::Idle && !isDead) {
+	if (!isMoving && state != State::Idle && !isDead && state != State::Attack) {
 		setState(State::Idle);
 	}
 
@@ -213,7 +220,7 @@ void Player::Movement(float deltaTime)
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
-			newGridPosition.x-- * speed;
+			newGridPosition.x--;// *speed;
 			moved = true;
 			sprite.setScale(-std::abs(scale), scale); // Flip sprite left
 			//std::cout << "Left pressed\n";
@@ -240,13 +247,15 @@ void Player::Movement(float deltaTime)
 			//Check for enemy FIRST before attacking
 			Enemy* targetEnemy = level->getEnemyAtGrid(newGridPosition.x, newGridPosition.y);
 
-			if (targetEnemy) {
+			if (targetEnemy && targetEnemy->getState() != Enemy::State::Dead) {
 				// Initiate attack without moving
+				std::cout << "Attacking enemy at (" << newGridPosition.x << ", " << newGridPosition.y << ")\n";
 				attackTargetGrid = newGridPosition;
 				setState(State::Attack);
 				isAttacking = true;
-				turns--;
 				targetEnemy->setState(Enemy::State::Dead);
+				turns--;  //Decrease a turn on attack
+				keyProcessed = true; //Prevent movement until attack completes
 			}
 			else {
 				targetPosition = sf::Vector2f(
@@ -255,8 +264,9 @@ void Player::Movement(float deltaTime)
 				);
 				gridPosition = newGridPosition;
 				isMoving = true;
-				keyProcessed = true;
 				setState(State::Running);
+				turns--;
+				keyProcessed = true; //Decrease a turn on movement
 			}
 		}
 	}
@@ -287,8 +297,8 @@ void Player::Attack(float deltaTime)
 	setState(State::Attack);
 	turns--;
 
-	Player::State currentState = getState();
 #ifndef NDEBUG
+	Player::State currentState = getState();
 	// Check state
 	if (currentState == Player::State::Idle) {
 		printf("Idle");
@@ -357,7 +367,9 @@ void Player::doAttack(float deltaTime)
 	//Animate player sprite frame by frame
 	frameTime += deltaTime;
 	if (frameTime >= 0.2f) {
-		sourceImage.x++;
+		if (sourceImage.x < AttackAnim.getSize().x / 128 - 1) { //Grok fix
+			sourceImage.x++;
+		}
 		// Check sprite sheet width
 		if (sourceImage.x * 128 >= AttackAnim.getSize().x) {
 			sourceImage.x = 0;

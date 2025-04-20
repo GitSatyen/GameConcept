@@ -4,6 +4,10 @@ Make the player attack:
 	-Player should do attack anim before moving on the next grid
 	-Enemy should play dead anim and be removed
 	-This takes a turn of the player
+	*Adjust the progress in Level.cpp updateCollision(). Make sure to just
+	make variables of each line of the player collider and make logic 
+	work from there
+
 -> Add pause to menu to quit or restart
 -> Add restart while playing:
 	-Make the level restart when player presses R
@@ -12,6 +16,7 @@ Make the player attack:
 **If evertyhing is implemented
 Add more Levels:
 	-Create more levels and parse them in
+	-Make use of spikes
 	-Clear the image and display the next level
 
 	

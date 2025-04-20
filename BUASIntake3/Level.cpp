@@ -259,7 +259,7 @@ bool Level::isWalkingGround(int gridX, int gridY) const
 		if (gridX < 0 || gridY < 0 ||
 			gridX >= walkingLayer.getGridSize().x ||
 			gridY >= walkingLayer.getGridSize().y) {
-			return false;
+				return false;
 		}
 		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
 		std::cout << "Tile (" << gridX << "," << gridY << "): "
@@ -342,25 +342,60 @@ void Level::updateCollision(float deltaTime)
 		}
 	}
 
+	//**ADJUST THIS BROKEN MESS**
 	//When colliding with an Enemy
-	if (player) {
-		for (Enemy* enemy : enemies) {
-			if (enemy) {
-				bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
-				if (coll_With_Enemy) {
-					std::cout << "Collding with Enemy\n";
-				}
-			}
-		}
-	}
+	//if (player) {
+	//	for (Enemy* enemy : enemies) {
+	//		if (enemy && enemy->getState() != Enemy::State::Dead) {
+	//			bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
+	//			if (coll_With_Enemy) {
+	//				//Get colliders
+	//				sf::FloatRect playerCollider = player->getCollider();
+	//				sf::FloatRect enemyCollider = enemy->getCollider();
 
-	//First check if death animation completed
-	if (player && player->isDeathAnimationComplete()) {
-		hasLost = true;
-	}
+	//				//Calculate overlaps for each side
+	//				//Deepseek fixed
+	//				float overlapLeft = enemyCollider.left - (playerCollider.left + playerCollider.width);
+	//				float overlapRight = (enemyCollider.left + enemyCollider.width) - playerCollider.left;
+	//				float overlapTop = enemyCollider.top - (playerCollider.top - playerCollider.height);
+	//				float overlapBottom = (enemyCollider.top + enemyCollider.height) - playerCollider.top;
 
+	//				//Deepseek fix
+	//				//Determine the smallest overlap
+	//				float minOverlap = std::min({ overlapLeft, overlapRight, overlapTop, overlapBottom });
+
+	//				//Check collision side based on the smallest overlap
+	//				if (minOverlap == overlapLeft && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+	//					std::cout << "Collision on Enemy's Left side\n";
+	//					enemy->setState(Enemy::State::Dead);
+	//					player->setState(Player::State::Attack);
+	//			
+	//					if (!player->getkeyProcessed()) {
+	//						player->setkeyProcessed(true); // Prevent multiple decrements
+	//					}
+	//				}
+	//				else if (minOverlap == overlapRight && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+	//					std::cout << "Collision on Enemy's Right side\n";
+	//					enemy->setState(Enemy::State::Dead);
+	//					player->setState(Player::State::Attack);
+
+	//					if (!player->getkeyProcessed()) {
+	//						player->setkeyProcessed(true); // Prevent multiple decrements
+	//					}
+	//				}
+	//				else if (minOverlap == overlapTop) {
+	//					std::cout << "Collision on Enemy's Top side\n";
+	//				}
+	//				else if (minOverlap == overlapBottom) {
+	//					std::cout << "Collision on Enemy's Bottom side\n";
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
+	
 	//Check if player has no more turns
-	if (player && player->turns <= 0) { 
+	if (player && player->turns <= 0) {
 		player->isDead = true;
 		player->setState(Player::State::Dead);
 		hasLost = true;
@@ -376,6 +411,8 @@ void Level::updateCollision(float deltaTime)
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}),
 		enemies.end());
+
+
 }
 
 void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)

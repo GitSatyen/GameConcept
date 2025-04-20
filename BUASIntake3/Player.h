@@ -56,6 +56,10 @@ public:
 	//Public methods to refrence private variables
 	void resetAnimationFrame() { sourceImage.x = 0; }
 	void resetFrameTimer() { frameTime = 0.0f; }
+
+	//Other getters and setters 
+	bool getkeyProcessed() const { return keyProcessed; }
+	void setkeyProcessed(bool val) { keyProcessed = val; }
 	
 	uint32_t turns; //Experimental unsigned int. Value should not be negative
 	bool deadAnimeFinished = false;
