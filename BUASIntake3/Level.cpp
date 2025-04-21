@@ -344,55 +344,95 @@ void Level::updateCollision(float deltaTime)
 
 	//**ADJUST THIS BROKEN MESS**
 	//When colliding with an Enemy
-	//if (player) {
-	//	for (Enemy* enemy : enemies) {
-	//		if (enemy && enemy->getState() != Enemy::State::Dead) {
-	//			bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
-	//			if (coll_With_Enemy) {
-	//				//Get colliders
-	//				sf::FloatRect playerCollider = player->getCollider();
-	//				sf::FloatRect enemyCollider = enemy->getCollider();
+	// When colliding with an Enemy
+	if (player) {
+		for (Enemy* enemy : enemies) {
+			if (enemy && enemy->getState() != Enemy::State::Dead) {
+				bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
+				if (coll_With_Enemy) {
+					// Get colliders
+					sf::FloatRect playerCollider = player->getCollider();
+					sf::FloatRect enemyCollider = enemy->getCollider();
 
-	//				//Calculate overlaps for each side
-	//				//Deepseek fixed
-	//				float overlapLeft = enemyCollider.left - (playerCollider.left + playerCollider.width);
-	//				float overlapRight = (enemyCollider.left + enemyCollider.width) - playerCollider.left;
-	//				float overlapTop = enemyCollider.top - (playerCollider.top - playerCollider.height);
-	//				float overlapBottom = (enemyCollider.top + enemyCollider.height) - playerCollider.top;
+					// Calculate overlaps for each side
+					// Deepseek fixed
+					float overlapLeft = enemyCollider.left - (playerCollider.left + playerCollider.width);
+					float overlapRight = (enemyCollider.left + enemyCollider.width) - playerCollider.left;
+					float overlapTop = enemyCollider.top - (playerCollider.top - playerCollider.height);
+					float overlapBottom = (enemyCollider.top + enemyCollider.height) - playerCollider.top;
 
-	//				//Deepseek fix
-	//				//Determine the smallest overlap
-	//				float minOverlap = std::min({ overlapLeft, overlapRight, overlapTop, overlapBottom });
+					//Values for each side of the collider
+					float topCollider = playerCollider.top;
+					float bottomCollider = playerCollider.top + playerCollider.height;
+					float leftCollider = playerCollider.left;
+					float righttCollider = playerCollider.left + playerCollider.width;
 
-	//				//Check collision side based on the smallest overlap
-	//				if (minOverlap == overlapLeft && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-	//					std::cout << "Collision on Enemy's Left side\n";
-	//					enemy->setState(Enemy::State::Dead);
-	//					player->setState(Player::State::Attack);
-	//			
-	//					if (!player->getkeyProcessed()) {
-	//						player->setkeyProcessed(true); // Prevent multiple decrements
-	//					}
-	//				}
-	//				else if (minOverlap == overlapRight && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-	//					std::cout << "Collision on Enemy's Right side\n";
-	//					enemy->setState(Enemy::State::Dead);
-	//					player->setState(Player::State::Attack);
+					// Create a thin rect on the left edge of the player
+					sf::FloatRect playerLeftEdge(
+						playerCollider.left, // x = right side
+						playerCollider.top,                         // y
+						1.f,                                        // width (1 pixel)
+						playerCollider.height                       // height
+					);
 
-	//					if (!player->getkeyProcessed()) {
-	//						player->setkeyProcessed(true); // Prevent multiple decrements
-	//					}
-	//				}
-	//				else if (minOverlap == overlapTop) {
-	//					std::cout << "Collision on Enemy's Top side\n";
-	//				}
-	//				else if (minOverlap == overlapBottom) {
-	//					std::cout << "Collision on Enemy's Bottom side\n";
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+					// Create a thin rect on the right edge of the player
+					sf::FloatRect playerRightEdge(
+						playerCollider.left + playerCollider.width, // x = right side
+						playerCollider.top,                         // y
+						1.f,                                        // width (1 pixel)
+						playerCollider.height                       // height
+					);
+
+					// Create a thin rect on the right edge of the player
+					sf::FloatRect playerTopEdge(
+						playerCollider.left,
+						playerCollider.top,
+						playerCollider.width,
+						1.f                
+					);
+					
+					// Deepseek fix
+					// Determine the smallest overlap
+					float minOverlap = std::min({ overlapLeft, overlapRight, overlapTop, overlapBottom });
+
+					// Check collision side based on the smallest overlap
+					//if (minOverlap == overlapLeft && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+					if (playerLeftEdge.intersects(enemyCollider)){
+						std::cout << "Collision on Enemy's Left side\n";
+						enemy->setState(Enemy::State::Dead);
+						player->setState(Player::State::Attack);
+
+						if (!player->getkeyProcessed()) {
+							player->setkeyProcessed(true); // Prevent multiple decrements
+						}
+					}
+					else if (playerRightEdge.intersects(enemyCollider)) {
+						std::cout << "Collision on Enemy's Right side\n";
+						colldingWithEnemy = true;
+						enemy->setState(Enemy::State::Dead);
+						player->setState(Player::State::Attack);
+
+						if (!player->getkeyProcessed()) {
+							player->setkeyProcessed(true); // Prevent multiple decrements
+						}
+
+					}
+					else if (playerTopEdge.intersects(enemyCollider)) {
+						std::cout << "Collision on Enemy's Top side\n";
+						colldingWithEnemy = true;
+						enemy->setState(Enemy::State::Dead);
+
+						if (!player->getkeyProcessed()) {
+							player->setkeyProcessed(true); // Prevent multiple decrements
+						}
+					}
+					else if (minOverlap == overlapBottom) {
+						std::cout << "Collision on Enemy's Bottom side\n";
+					}
+				}
+			}
+		}
+	}
 	
 	//Check if player has no more turns
 	if (player && player->turns <= 0) {

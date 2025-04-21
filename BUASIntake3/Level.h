@@ -65,4 +65,6 @@ private:
 	sf::View gameView;
 	float zoomFactor = 1.0f;
 	float baseWidth, baseHeight;
+
+	bool colldingWithEnemy = false;
 };

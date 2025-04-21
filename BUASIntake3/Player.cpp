@@ -133,6 +133,28 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
+	if (state == State::Attack) {
+		doAttack(deltaTime);
+
+		//Check if attack animation completed
+		if (sourceImage.x >= AttackAnim.getSize().x / 128 - 1) {
+			attackCompleted = true;
+			isAttacking = false;
+
+			gridPosition = attackTargetGrid;
+			targetPosition = sf::Vector2f(
+				gridPosition.x * tileSize + tileSize / 2.0f,
+				gridPosition.y * tileSize + tileSize / 2.0f
+			);
+			std::cout << "Post-attack move to grid (" << gridPosition.x << ", " << gridPosition.y << ")\n";
+			std::cout << "Target position: (" << targetPosition.x << ", " << targetPosition.y << ")\n";
+			isMoving = true;
+			setState(State::Running);
+		}
+		else { setState(State::Idle); }
+		attackCompleted = false;
+	}
+
 	//Make sure to handle movement only if not attacking
 	if (state != State::Attack) {
 		Movement(deltaTime);
@@ -155,37 +177,6 @@ void Player::update(float deltaTime)
 				direction.y /= distance;
 			}
 			sprite.move(direction * speed * deltaTime);
-		}
-	}
-
-	if (state == State::Attack) {
-		doAttack(deltaTime);
-
-		//Check if attack animation completed
-		if (sourceImage.x >= AttackAnim.getSize().x / 128 - 1) {
-			attackCompleted = true;
-			isAttacking = false;
-			//Grok solution
-			//Move to the target grid if no enemy remains
-			Enemy* targetEnemy = level->getEnemyAtGrid(attackTargetGrid.x, attackTargetGrid.y);
-			if (!targetEnemy || targetEnemy->getState() == Enemy::State::Dead) {
-				gridPosition = attackTargetGrid;
-				targetPosition = sf::Vector2f(
-					gridPosition.x * tileSize + tileSize / 2.0f,
-					gridPosition.y * tileSize + tileSize / 2.0f
-				);
-				//Prevent sliding off bounds by clamping targetPosition
-				float maxX = level->getLevel().size.x - tileSize / 2.0f;
-				float maxY = level->getLevel().size.y - tileSize / 2.0f;
-				targetPosition.x = std::max(tileSize / 2.0f, std::min(targetPosition.x, maxX));
-				targetPosition.y = std::max(tileSize / 2.0f, std::min(targetPosition.y, maxY));
-
-				std::cout << "Post-attack move to grid (" << gridPosition.x << ", " << gridPosition.y << ")\n";
-				std::cout << "Target position: (" << targetPosition.x << ", " << targetPosition.y << ")\n";
-				isMoving = true;
-				setState(State::Running);
-			}else {setState(State::Idle);}
-			attackCompleted = false;
 		}
 	}
 	
@@ -258,11 +249,12 @@ void Player::Movement(float deltaTime)
 				keyProcessed = true; //Prevent movement until attack completes
 			}
 			else {
+				gridPosition = newGridPosition;
 				targetPosition = sf::Vector2f(
 					newGridPosition.x * tileSize + tileSize / 2.0f,
 					newGridPosition.y * tileSize + tileSize / 2.0f
 				);
-				gridPosition = newGridPosition;
+				//gridPosition = newGridPosition;
 				isMoving = true;
 				setState(State::Running);
 				turns--;
