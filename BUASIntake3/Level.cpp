@@ -390,15 +390,20 @@ void Level::updateCollision(float deltaTime)
 						playerCollider.width,
 						1.f                
 					);
+
+					sf::FloatRect playerBottomEdge(
+						playerCollider.left,
+						playerCollider.top + playerCollider.height - 1.f, // Position at bottom
+						playerCollider.width,
+						1.f
+					);
 					
 					// Deepseek fix
 					// Determine the smallest overlap
-					float minOverlap = std::min({ overlapLeft, overlapRight, overlapTop, overlapBottom });
+					//float minOverlap = std::min({ overlapLeft, overlapRight, overlapTop, overlapBottom });
 
-					// Check collision side based on the smallest overlap
-					//if (minOverlap == overlapLeft && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-					if (playerLeftEdge.intersects(enemyCollider)){
-						std::cout << "Collision on Enemy's Left side\n";
+					// Check collision on each side
+					if (playerLeftEdge.intersects(enemyCollider) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
 						enemy->setState(Enemy::State::Dead);
 						player->setState(Player::State::Attack);
 
@@ -406,8 +411,7 @@ void Level::updateCollision(float deltaTime)
 							player->setkeyProcessed(true); // Prevent multiple decrements
 						}
 					}
-					else if (playerRightEdge.intersects(enemyCollider)) {
-						std::cout << "Collision on Enemy's Right side\n";
+					else if (playerRightEdge.intersects(enemyCollider) && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 						colldingWithEnemy = true;
 						enemy->setState(Enemy::State::Dead);
 						player->setState(Player::State::Attack);
@@ -417,8 +421,7 @@ void Level::updateCollision(float deltaTime)
 						}
 
 					}
-					else if (playerTopEdge.intersects(enemyCollider)) {
-						std::cout << "Collision on Enemy's Top side\n";
+					else if (playerTopEdge.intersects(enemyCollider) && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 						colldingWithEnemy = true;
 						enemy->setState(Enemy::State::Dead);
 
@@ -426,8 +429,13 @@ void Level::updateCollision(float deltaTime)
 							player->setkeyProcessed(true); // Prevent multiple decrements
 						}
 					}
-					else if (minOverlap == overlapBottom) {
-						std::cout << "Collision on Enemy's Bottom side\n";
+					else if (playerBottomEdge.intersects(enemyCollider) && sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+						colldingWithEnemy = true;
+						enemy->setState(Enemy::State::Dead);
+
+						if (!player->getkeyProcessed()) {
+							player->setkeyProcessed(true); // Prevent multiple decrements
+						}
 					}
 				}
 			}
@@ -451,13 +459,11 @@ void Level::updateCollision(float deltaTime)
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}),
 		enemies.end());
-
-
 }
 
 void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)
 {
-	std::cout << player->turns;
+	//std::cout << player->turns;
 	text.setFont(font);
 	text.setString("Turns: " + std::to_string(countdown));
 	text.setCharacterSize(12);

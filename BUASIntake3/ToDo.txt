@@ -4,9 +4,7 @@ Make the player attack:
 	-Player should do attack anim before moving on the next grid
 	-Enemy should play dead anim and be removed
 	-This takes a turn of the player
-	*Adjust the progress in Level.cpp updateCollision(). Make sure to just
-	make variables of each line of the player collider and make logic 
-	work from there
+	*Fix the attacking positions and the animations
 
 -> Add pause to menu to quit or restart
 -> Add restart while playing:
