@@ -6,10 +6,11 @@ Make the player attack:
 	-This takes a turn of the player
 	*Fix the attacking positions and the animations
 
--> Add pause to menu to quit or restart
 -> Add restart while playing:
 	-Make the level restart when player presses R
 	-Display text underneath the level to restart with R
+-> Add pause to menu to quit or restart
+
 
 **If evertyhing is implemented
 Add more Levels:

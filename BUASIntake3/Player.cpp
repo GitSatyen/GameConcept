@@ -65,6 +65,7 @@ void Player::setState(State newState)
 			frameTime = 0.0f;  // Reset frame timer
 			sprite.setTextureRect(sf::IntRect(sourceImage.x * 128,
 				sourceImage.y * 128, 128, 128));
+			keyProcessed = false;
 		}
 
 		switch (newState)
@@ -133,6 +134,7 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
+	//Make Player attack
 	if (state == State::Attack) {
 		doAttack(deltaTime);
 
@@ -141,45 +143,40 @@ void Player::update(float deltaTime)
 			attackCompleted = true;
 			isAttacking = false;
 
-			gridPosition = attackTargetGrid;
-			targetPosition = sf::Vector2f(
-				gridPosition.x * tileSize + tileSize / 2.0f,
-				gridPosition.y * tileSize + tileSize / 2.0f
-			);
-			std::cout << "Post-attack move to grid (" << gridPosition.x << ", " << gridPosition.y << ")\n";
-			std::cout << "Target position: (" << targetPosition.x << ", " << targetPosition.y << ")\n";
-			isMoving = true;
-			setState(State::Running);
+			//Prevent and reset movement while attacking
+			isMoving = false;
+			keyProcessed = true;
+			setState(State::Idle);
 		}
-		else { setState(State::Idle); }
 		attackCompleted = false;
 	}
 
 	//Make sure to handle movement only if not attacking
 	if (state != State::Attack) {
 		Movement(deltaTime);
+
+		//Make Player move
+		if (isMoving) { //Deepseek solution
+			//Move towards the target position
+			sf::Vector2f direction = targetPosition - sprite.getPosition();
+			float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+			if (distance < 5.0f) { // Close enough to snap to position
+				sprite.setPosition(targetPosition);
+				isMoving = false;
+			}
+			else {
+				// Normalize the direction and move
+				if (distance > 0) {
+					direction /= distance;
+					sprite.move(direction * speed * deltaTime);
+				}
+				
+			}
+		}
 	}
 
-	//Player movement
-	if (isMoving) { //Deepseek solution
-		//Move towards the target position
-		sf::Vector2f direction = targetPosition - sprite.getPosition();
-		float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-	
-		if (distance < 5.0f) { // Close enough to snap to position
-			sprite.setPosition(targetPosition);
-			isMoving = false;
-		}
-		else {
-			// Normalize the direction and move
-			if (distance > 0) {
-				direction.x /= distance;
-				direction.y /= distance;
-			}
-			sprite.move(direction * speed * deltaTime);
-		}
-	}
-	
+	//Make Player die 
 	if (turns < 1) {
 		isDead = true;
 	}
@@ -200,7 +197,7 @@ void Player::update(float deltaTime)
 void Player::Movement(float deltaTime)
 {
 	//Prevent player from moving when he has won
-	if (levelRef && (levelRef->hasWon || levelRef->hasLost)) {
+	if (state == State::Attack || isDead || (levelRef->hasWon || levelRef->hasLost)) {
 		isMoving = false;
 		return;
 	}
@@ -211,24 +208,24 @@ void Player::Movement(float deltaTime)
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
-			newGridPosition.x--;// *speed;
+			newGridPosition.x--;
 			moved = true;
 			sprite.setScale(-std::abs(scale), scale); // Flip sprite left
 			//std::cout << "Left pressed\n";
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
 			newGridPosition.x++;
 			moved = true;
 			sprite.setScale(std::abs(scale), scale); // Flip sprite left
 			//std::cout << "Right pressed\n";
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 		{
 			newGridPosition.y--;
 			moved = true;
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 		{
 			newGridPosition.y++;
 			moved = true;
@@ -254,7 +251,7 @@ void Player::Movement(float deltaTime)
 					newGridPosition.x * tileSize + tileSize / 2.0f,
 					newGridPosition.y * tileSize + tileSize / 2.0f
 				);
-				//gridPosition = newGridPosition;
+				gridPosition = newGridPosition;
 				isMoving = true;
 				setState(State::Running);
 				turns--;
