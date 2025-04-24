@@ -54,12 +54,23 @@ int main() {
         level.resetGameState();
         player.setStartPosition(level.getPlayerStartPosition());
         princess.setPosition(level.getPrincessPosition());
-        // Reset enemies
-        for (size_t i = 0; i < level.getEnemyPositions().size(); i++) {
-            enemies[i].setPosition(level.getEnemyPositions()[i]);
+        enemies.clear(); //Clear existing enemies
+        level.clearEnemies();
+
+        //Recreate enemies from their positions
+        enemies.reserve(level.getEnemyPositions().size());
+        for (const auto& pos : level.getEnemyPositions()) {
+            enemies.emplace_back();
+            enemies.back().setPosition(pos);
+            enemies.back().setLevel(level);
+            level.setEnemy(&enemies.back());
         }
     };
     setupGame();
+
+    /*if (level.hasWon = true) {
+        std::cout << "Princess saved!\n";
+    }*/
 
     while (window.isOpen()) {
         sf::Event event;

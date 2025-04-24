@@ -88,6 +88,7 @@ private:
 
 	//Movement values
 	bool keyProcessed = false;
+	bool requireKeyRelease = false;
 	bool isMoving = false;
 	bool canMove = true;
 

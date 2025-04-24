@@ -43,6 +43,7 @@ public:
 	void gameOver(sf::RenderWindow& window);
 
 	void resetGameState();
+	void clearEnemies() { enemies.clear(); }
 
 	bool hasWon;
 	bool hasLost;

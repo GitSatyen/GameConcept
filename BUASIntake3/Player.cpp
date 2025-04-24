@@ -65,7 +65,7 @@ void Player::setState(State newState)
 			frameTime = 0.0f;  // Reset frame timer
 			sprite.setTextureRect(sf::IntRect(sourceImage.x * 128,
 				sourceImage.y * 128, 128, 128));
-			keyProcessed = false;
+			//keyProcessed = false;
 		}
 
 		switch (newState)
@@ -79,6 +79,7 @@ void Player::setState(State newState)
 			break;
 		case State::Attack:
 			sprite.setTexture(AttackAnim);
+			isMoving = false; //Prevent movement during attack 
 			break;
 		case State::Hurt:
 			break;
@@ -134,46 +135,77 @@ void Player::draw(sf::RenderTarget& image)
 
 void Player::update(float deltaTime)
 {
+	// Reset requireKeyRelease when all keys are released
+	if (requireKeyRelease) {
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			requireKeyRelease = false;
+		}
+		else { return; }
+	}
+
 	//Make Player attack
 	if (state == State::Attack) {
 		doAttack(deltaTime);
 
 		//Check if attack animation completed
 		if (sourceImage.x >= AttackAnim.getSize().x / 128 - 1) {
-			attackCompleted = true;
+			//attackCompleted = true;
 			isAttacking = false;
 
-			//Prevent and reset movement while attacking
-			isMoving = false;
-			keyProcessed = true;
+			//Prevent and reset movement to allow new movement
+			//isMoving = false;
+			//keyProcessed = false;
 			setState(State::Idle);
+			requireKeyRelease = true;
 		}
-		attackCompleted = false;
+		//attackCompleted = false;
 	}
 
-	//Make sure to handle movement only if not attacking
-	if (state != State::Attack) {
-		Movement(deltaTime);
+	else if(isMoving){
+		//Move towards the target position
+		sf::Vector2f direction = targetPosition - sprite.getPosition();
+		float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-		//Make Player move
-		if (isMoving) { //Deepseek solution
-			//Move towards the target position
-			sf::Vector2f direction = targetPosition - sprite.getPosition();
-			float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-
-			if (distance < 5.0f) { // Close enough to snap to position
-				sprite.setPosition(targetPosition);
-				isMoving = false;
-			}
-			else {
-				// Normalize the direction and move
-				if (distance > 0) {
-					direction /= distance;
-					sprite.move(direction * speed * deltaTime);
-				}
-				
-			}
+		if (distance < 5.0f) { // Close enough to snap to position
+			sprite.setPosition(targetPosition);
+			isMoving = false;
+			gridPosition = sf::Vector2i(
+				static_cast<int>(targetPosition.x / tileSize),
+				static_cast<int>(targetPosition.y / tileSize)
+			);
+			setState(State::Idle);
+			requireKeyRelease = true;
 		}
+		else {
+			direction /= distance; //Grok fix
+			sprite.move(direction * speed * deltaTime);
+		}
+	}
+	else {
+		if (state == State::Idle && !requireKeyRelease) {
+			Movement(deltaTime);
+		}
+		////Make Player move
+		//if (isMoving) { //Deepseek solution
+		//	//Move towards the target position
+		//	sf::Vector2f direction = targetPosition - sprite.getPosition();
+		//	float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+		//	if (distance < 5.0f) { // Close enough to snap to position
+		//		sprite.setPosition(targetPosition);
+		//		isMoving = false;
+		//		gridPosition = sf::Vector2i(
+		//			static_cast<int>(targetPosition.x / tileSize),
+		//			static_cast<int>(targetPosition.y / tileSize)
+		//		);
+		//	}
+		//	else{
+		//		direction /= distance; //Grok fix
+		//		sprite.move(direction * speed * deltaTime);
+		//	}
 	}
 
 	//Make Player die 
@@ -197,39 +229,50 @@ void Player::update(float deltaTime)
 void Player::Movement(float deltaTime)
 {
 	//Prevent player from moving when he has won
-	if (state == State::Attack || isDead || (levelRef->hasWon || levelRef->hasLost)) {
-		isMoving = false;
+	if (levelRef && (levelRef->hasWon || levelRef->hasLost)) {
 		return;
 	}
 
-	if (!keyProcessed) {
+	//Wait for all keys to be released if required
+	if (requireKeyRelease) {
+		if (!isMoving && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
+			!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			requireKeyRelease = false;
+		}
+		return;
+	}
+	
+	if (!keyProcessed && state != State::Attack) {
 		sf::Vector2i newGridPosition = gridPosition;
 		bool moved = false;
-
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
+			std::cout << "Left key pressed, moving to (" << newGridPosition.x - 1 << ", " << newGridPosition.y << ")\n";
 			newGridPosition.x--;
 			moved = true;
 			sprite.setScale(-std::abs(scale), scale); // Flip sprite left
 			//std::cout << "Left pressed\n";
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		{
-			newGridPosition.x++;
-			moved = true;
-			sprite.setScale(std::abs(scale), scale); // Flip sprite left
-			//std::cout << "Right pressed\n";
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			newGridPosition.y--;
-			moved = true;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			newGridPosition.y++;
-			moved = true;
-		}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				std::cout << "Right key pressed, moving to (" << newGridPosition.x + 1 << ", " << newGridPosition.y << ")\n";
+				newGridPosition.x++;
+				moved = true;
+				sprite.setScale(std::abs(scale), scale); // Flip sprite left
+				//std::cout << "Right pressed\n";
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			{
+				newGridPosition.y--;
+				moved = true;
+			}
+			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+				newGridPosition.y++;
+				moved = true;
+			}
 
 		if (moved && level && level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
 			//Check for enemy FIRST before attacking
@@ -244,6 +287,7 @@ void Player::Movement(float deltaTime)
 				targetEnemy->setState(Enemy::State::Dead);
 				turns--;  //Decrease a turn on attack
 				keyProcessed = true; //Prevent movement until attack completes
+				requireKeyRelease = true; //Require key release after attack
 			}
 			else {
 				gridPosition = newGridPosition;
@@ -251,7 +295,6 @@ void Player::Movement(float deltaTime)
 					newGridPosition.x * tileSize + tileSize / 2.0f,
 					newGridPosition.y * tileSize + tileSize / 2.0f
 				);
-				gridPosition = newGridPosition;
 				isMoving = true;
 				setState(State::Running);
 				turns--;
@@ -261,7 +304,7 @@ void Player::Movement(float deltaTime)
 	}
 	//Deepseek solution
 	else { //Reset the flag when all keys are released
-		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
+		if (!isMoving && !sf::Keyboard::isKeyPressed(sf::Keyboard::Left) &&
 			!sf::Keyboard::isKeyPressed(sf::Keyboard::Right) &&
 			!sf::Keyboard::isKeyPressed(sf::Keyboard::Up) &&
 			!sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
@@ -276,7 +319,13 @@ void Player::Movement(float deltaTime)
 		//printf("Idle");
 	}
 	else if (currentState == Player::State::Running) {
-		//printf("Running");
+		printf("Running");
+	}
+	else if (currentState == Player::State::Attack) {
+		printf("Attacking");
+	}
+	else if (currentState == Player::State::None) {
+		printf("None");
 	}
 #endif 
 }
@@ -355,6 +404,7 @@ void Player::doAttack(float deltaTime)
 {
 	//Animate player sprite frame by frame
 	frameTime += deltaTime;
+
 	if (frameTime >= 0.2f) {
 		if (sourceImage.x < AttackAnim.getSize().x / 128 - 1) { //Grok fix
 			sourceImage.x++;

@@ -259,7 +259,8 @@ bool Level::isWalkingGround(int gridX, int gridY) const
 		if (gridX < 0 || gridY < 0 ||
 			gridX >= walkingLayer.getGridSize().x ||
 			gridY >= walkingLayer.getGridSize().y) {
-				return false;
+			std::cout << "Out of bounds: (" << gridX << ", " << gridY << ")\n";
+			return false;
 		}
 		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
 		std::cout << "Tile (" << gridX << "," << gridY << "): "
@@ -369,10 +370,10 @@ void Level::updateCollision(float deltaTime)
 
 					// Create a thin rect on the left edge of the player
 					sf::FloatRect playerLeftEdge(
-						playerCollider.left, // x = right side
-						playerCollider.top,                         // y
-						1.f,                                        // width (1 pixel)
-						playerCollider.height                       // height
+						playerCollider.left,  // x = right side
+						playerCollider.top,   // y
+						1.f,                  // width (1 pixel)
+						playerCollider.height // height
 					);
 
 					// Create a thin rect on the right edge of the player
@@ -491,14 +492,6 @@ void Level::resetGameState()
 		player->setStartPosition(getPlayerStartPosition());
 		player->turns = 32;
 		player->setState(Player::State::Idle);
-	}
-
-	// Reset enemies
-	// Deepseek fix
-	for (size_t i = 0; i < enemies.size() && i < enemyPositions.size(); i++) {
-		if (enemies[i]) {
-			enemies[i]->setPosition(enemyPositions[i]);
-		}
 	}
 }
 
