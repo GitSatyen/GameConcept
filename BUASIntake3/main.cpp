@@ -68,10 +68,6 @@ int main() {
     };
     setupGame();
 
-    /*if (level.hasWon = true) {
-        std::cout << "Princess saved!\n";
-    }*/
-
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

@@ -1,10 +1,8 @@
 TO DO
 
 Make the player attack:
-	-Player should do attack anim before moving on the next grid
-	-Enemy should play dead anim and be removed
-	-This takes a turn of the player
-	*Fix the attacking positions and the animations
+	-Take a turn of the player
+	*Fix the grid skipping
 
 -> Add pause to menu to quit or restart
 

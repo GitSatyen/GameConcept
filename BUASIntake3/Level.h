@@ -45,6 +45,8 @@ public:
 	void resetGameState();
 	void clearEnemies() { enemies.clear(); }
 
+	bool getcolldingWithEnemy() const { return colldingWithEnemy; }
+
 	bool hasWon;
 	bool hasLost;
 	bool reset = false;
