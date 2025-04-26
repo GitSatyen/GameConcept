@@ -276,7 +276,6 @@ void Player::Movement(float deltaTime)
 				attackTargetGrid = newGridPosition;
 				isAttacking = true;
 				targetEnemy->setState(Enemy::State::Dead);
-				turns--;  //Decrease a turn on attack
 				keyProcessed = true; //Prevent movement until attack completes
 				requireKeyRelease = true; //Require key release after attack
 				return;
@@ -303,29 +302,11 @@ void Player::Movement(float deltaTime)
 			keyProcessed = false;
 		}
 	}	
-
-//	Player::State currentState = getState();
-//#ifndef NDEBUG
-//	// Check state
-//	if (currentState == Player::State::Idle) {
-//		//printf("Idle");
-//	}
-//	else if (currentState == Player::State::Running) {
-//		printf("Running");
-//	}
-//	else if (currentState == Player::State::Attack) {
-//		printf("Attacking");
-//	}
-//	else if (currentState == Player::State::None) {
-//		printf("None");
-//	}
-//#endif 
 }
 
 void Player::Attack(float deltaTime)
 {
 	setState(State::Attack);
-	turns--;
 
 #ifndef NDEBUG
 	Player::State currentState = getState();

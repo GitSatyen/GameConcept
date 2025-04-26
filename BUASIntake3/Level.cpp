@@ -376,6 +376,7 @@ void Level::updateCollision(float deltaTime)
 						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
 							player->setState(Player::State::Attack);
 							enemy->setState(Enemy::State::Dead);
+							player->turns--;
 
 							if (!player->getkeyProcessed()) {
 								player->setkeyProcessed(true); // Prevent multiple decrements
@@ -390,6 +391,8 @@ void Level::updateCollision(float deltaTime)
 						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
 							player->setState(Player::State::Attack);
 							enemy->setState(Enemy::State::Dead);
+							player->turns--;
+
 							if (!player->getkeyProcessed()) {
 								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
@@ -403,6 +406,8 @@ void Level::updateCollision(float deltaTime)
 						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 							player->setState(Player::State::Attack);
 							enemy->setState(Enemy::State::Dead);
+							player->turns--;
+
 							if (!player->getkeyProcessed()) {
 								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
@@ -416,6 +421,8 @@ void Level::updateCollision(float deltaTime)
 						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 							player->setState(Player::State::Attack);
 							enemy->setState(Enemy::State::Dead);
+							player->turns--;
+
 							if (!player->getkeyProcessed()) {
 								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
