@@ -335,7 +335,12 @@ void Level::setEnemy(Enemy* EnemyRef)
 
 void Level::updateCollision(float deltaTime)
 {
-	colldingWithEnemy = false; //Reset collision state
+	//Reset collision states
+	colldingWithEnemy = false; 
+	leftEdgeIsColliding = false;
+	rightEdgeIsColliding = false;
+	topEdgeIsColliding = false;
+	bottomEdgeIsColliding = false;
 
 	//When colliding with Princess
 	if (player && princess) {
@@ -354,103 +359,65 @@ void Level::updateCollision(float deltaTime)
 			if (enemy && enemy->getState() != Enemy::State::Dead) {
 				bool coll_With_Enemy = player->checkAnchorCollision(enemy->getCollider());
 				if (coll_With_Enemy) {
-					// Get colliders
-					sf::FloatRect playerCollider = player->getCollider();
+					//Get collider edges from the Player
+					sf::FloatRect playerLeftEdge = player->getLeftEdge();
+					sf::FloatRect playerRightEdge = player->getRightEdge();
+					sf::FloatRect playerTopEdge = player->getTopEdge();
+					sf::FloatRect playerBottomEdge = player->getBottomEdge();
+
+					//Get enemy collider from the Enemy
 					sf::FloatRect enemyCollider = enemy->getCollider();
+					// Check collision on each side
+					if (playerLeftEdge.intersects(enemyCollider)) {
+						//std::cout << "Left collider on enemy";
+						colldingWithEnemy = true;
+						leftEdgeIsColliding = true;
 
-					// Calculate overlaps for each side
-					// Deepseek fixed
-					float overlapLeft = enemyCollider.left - (playerCollider.left + playerCollider.width);
-					float overlapRight = (enemyCollider.left + enemyCollider.width) - playerCollider.left;
-					float overlapTop = enemyCollider.top - (playerCollider.top - playerCollider.height);
-					float overlapBottom = (enemyCollider.top + enemyCollider.height) - playerCollider.top;
+						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+							player->setState(Player::State::Attack);
+							enemy->setState(Enemy::State::Dead);
 
-					//Values for each side of the collider
-					float topCollider = playerCollider.top;
-					float bottomCollider = playerCollider.top + playerCollider.height;
-					float leftCollider = playerCollider.left;
-					float righttCollider = playerCollider.left + playerCollider.width;
-
-					// Create a thin rect on the left edge of the player
-					sf::FloatRect playerLeftEdge(
-						playerCollider.left - 1.f,  // x = left side
-						playerCollider.top,			// y
-						1.f,						// width (1 pixel)
-						playerCollider.height		// height
-					);
-
-					// Create a thin rect on the right edge of the player
-					sf::FloatRect playerRightEdge(
-						playerCollider.left + playerCollider.width, // x = right side
-						playerCollider.top,                         // y
-						1.f,                                        // width (1 pixel)
-						playerCollider.height                       // height
-					);
-
-					// Create a thin rect on the right edge of the player
-					sf::FloatRect playerTopEdge(
-						playerCollider.left,       // x = right side
-						playerCollider.top - 1.f, //
-						playerCollider.width,
-						1.f
-					);
-
-					sf::FloatRect playerBottomEdge(
-						playerCollider.left,
-						playerCollider.top + playerCollider.height, // Position at bottom
-						playerCollider.width,
-						1.f
-					);
-
-					if (coll_With_Enemy) {
-						// Check collision on each side
-						if (playerLeftEdge.intersects(enemyCollider)) {
-							//std::cout << "Left collider on enemy";
-							colldingWithEnemy = true;
-
-							if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-								player->setState(Player::State::Attack);
-								enemy->setState(Enemy::State::Dead);
-								
-								if (!player->getkeyProcessed()) {
-									player->setkeyProcessed(true); // Prevent multiple decrements
-								}
+							if (!player->getkeyProcessed()) {
+								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
 						}
-						else if (playerRightEdge.intersects(enemyCollider)) {
-							//std::cout << "Right collider on enemy";
-							colldingWithEnemy = true;
+					}
+					else if (playerRightEdge.intersects(enemyCollider)) {
+						//std::cout << "Right collider on enemy";
+						colldingWithEnemy = true;
+						rightEdgeIsColliding = true;
 
-							if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-								player->setState(Player::State::Attack);
-								enemy->setState(Enemy::State::Dead);
-								if (!player->getkeyProcessed()) {
-									player->setkeyProcessed(true); // Prevent multiple decrements
-								}
+						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+							player->setState(Player::State::Attack);
+							enemy->setState(Enemy::State::Dead);
+							if (!player->getkeyProcessed()) {
+								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
 						}
-						else if (playerTopEdge.intersects(enemyCollider)) {
-							//std::cout << "Upper collider on enemy";
-							colldingWithEnemy = true;
+					}
+					else if (playerTopEdge.intersects(enemyCollider)) {
+						//std::cout << "Upper collider on enemy";
+						colldingWithEnemy = true;
+						topEdgeIsColliding = true;
 
-							if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-								player->setState(Player::State::Attack);
-								enemy->setState(Enemy::State::Dead);
-								if (!player->getkeyProcessed()) {
-									player->setkeyProcessed(true); // Prevent multiple decrements
-								}
+						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+							player->setState(Player::State::Attack);
+							enemy->setState(Enemy::State::Dead);
+							if (!player->getkeyProcessed()) {
+								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
 						}
-						else if (playerBottomEdge.intersects(enemyCollider)) {
-							//std::cout << "Lower collider on enemy";
-							colldingWithEnemy = true;
+					}
+					else if (playerBottomEdge.intersects(enemyCollider)) {
+						//std::cout << "Lower collider on enemy";
+						colldingWithEnemy = true;
+						bottomEdgeIsColliding = true;
 
-							if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-								player->setState(Player::State::Attack);
-								enemy->setState(Enemy::State::Dead);
-								if (!player->getkeyProcessed()) {
-									player->setkeyProcessed(true); // Prevent multiple decrements
-								}
+						if (colldingWithEnemy && sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+							player->setState(Player::State::Attack);
+							enemy->setState(Enemy::State::Dead);
+							if (!player->getkeyProcessed()) {
+								player->setkeyProcessed(true); // Prevent multiple decrements
 							}
 						}
 					}

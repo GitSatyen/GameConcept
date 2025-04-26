@@ -49,6 +49,12 @@ public:
 	sf::FloatRect getCollider() const;
 	bool checkCollsion(const sf::FloatRect& rect);
 
+	//Methods to get collider edges
+	sf::FloatRect getLeftEdge() const;
+	sf::FloatRect getRightEdge() const;
+	sf::FloatRect getTopEdge() const;
+	sf::FloatRect getBottomEdge() const;
+
 	std::vector<sf::Vector2f> getAnchorPoints() const; 
 	bool checkAnchorCollision(const sf::FloatRect& rect);
 	bool isDeathAnimationComplete() const { return deadAnimeFinished; }
@@ -60,6 +66,8 @@ public:
 	//Other getters and setters 
 	bool getkeyProcessed() const { return keyProcessed; }
 	void setkeyProcessed(bool val) { keyProcessed = val; }
+
+	bool isRightEdgeCollidingWith(const sf::FloatRect& otherCollider) const;
 	
 	uint32_t turns; //Experimental unsigned int. Value should not be negative
 	bool deadAnimeFinished = false;

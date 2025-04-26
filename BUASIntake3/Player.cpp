@@ -225,11 +225,16 @@ void Player::Movement(float deltaTime)
 		}
 		return;
 	}
+
+	// Check edge collisions via Level's getters
+	if (levelRef->isRightEdgeColliding()) {
+		std::cout << "Player's right edge is colliding with an enemy!\n";
+	}
 	
 	if (!keyProcessed && state != State::Attack) {
 		sf::Vector2i newGridPosition = gridPosition;
 		bool moved = false;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !level->getcolldingWithEnemy() )
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && !level->isLeftEdgeColliding())
 		{
 			if (state != State::Attack) {
 				std::cout << "Left key pressed, moving to (" << newGridPosition.x - 1 << ", " << newGridPosition.y << ")\n";
@@ -239,7 +244,7 @@ void Player::Movement(float deltaTime)
 				//std::cout << "Left pressed\n";
 			}
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !level->getcolldingWithEnemy())
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && !level->isRightEdgeColliding())
 		{
 			if (state != State::Attack) {
 				std::cout << "Right key pressed, moving to (" << newGridPosition.x + 1 << ", " << newGridPosition.y << ")\n";
@@ -249,12 +254,12 @@ void Player::Movement(float deltaTime)
 				//std::cout << "Right pressed\n";
 			}
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !level->getcolldingWithEnemy())
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !level->isTopEdgeColliding())
 		{
 			newGridPosition.y--;
 			moved = true;
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !level->getcolldingWithEnemy())
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !level->isBottomEdgeColliding())
 		{
 			newGridPosition.y++;
 			moved = true;
@@ -384,7 +389,6 @@ void Player::doRunning(float deltaTime)
 		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
 		frameTime = 0.0f;
 	}
-
 }
 
 void Player::doAttack(float deltaTime)
@@ -490,6 +494,50 @@ bool Player::checkCollsion(const sf::FloatRect& rect)
 	return getCollider().intersects(rect);
 }
 
+sf::FloatRect Player::getLeftEdge() const
+{
+	sf::FloatRect collider = getCollider();
+	return sf::FloatRect(
+		collider.left - 1.f,
+		collider.top,
+		1.f, // Thin width (1 pixel)
+		collider.height
+	);
+}
+
+sf::FloatRect Player::getRightEdge() const
+{
+	sf::FloatRect collider = getCollider();
+	return sf::FloatRect(
+		collider.left + collider.width,
+		collider.top,
+		1.f,
+		collider.height
+	);
+}
+
+sf::FloatRect Player::getTopEdge() const
+{
+	sf::FloatRect collider = getCollider();
+	return sf::FloatRect(
+		collider.left,
+		collider.top - 1.f,
+		collider.width,
+		1.f // Thin height (1 pixel)
+	);
+}
+
+sf::FloatRect Player::getBottomEdge() const
+{
+	sf::FloatRect collider = getCollider();
+	return sf::FloatRect(
+		collider.left,
+		collider.top + collider.height,
+		collider.width,
+		1.f
+	);
+}
+
 std::vector<sf::Vector2f> Player::getAnchorPoints() const
 {
 	sf::FloatRect collider = getCollider();
@@ -521,4 +569,13 @@ bool Player::checkAnchorCollision(const sf::FloatRect& rect)
 		}
 	}
 	return false;
+}
+
+bool Player::isRightEdgeCollidingWith(const sf::FloatRect& otherCollider) const
+{
+	// Get the player's right edge
+	sf::FloatRect rightEdge = getRightEdge();
+
+	// Check intersection with the given collider
+	return rightEdge.intersects(otherCollider);
 }

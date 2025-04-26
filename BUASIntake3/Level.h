@@ -46,6 +46,10 @@ public:
 	void clearEnemies() { enemies.clear(); }
 
 	bool getcolldingWithEnemy() const { return colldingWithEnemy; }
+	bool isLeftEdgeColliding() const { return leftEdgeIsColliding; }
+	bool isRightEdgeColliding() const { return rightEdgeIsColliding; }
+	bool isTopEdgeColliding() const { return topEdgeIsColliding; }
+	bool isBottomEdgeColliding() const { return bottomEdgeIsColliding; }
 
 	bool hasWon;
 	bool hasLost;
@@ -70,4 +74,9 @@ private:
 	float baseWidth, baseHeight;
 
 	bool colldingWithEnemy = false;
+	bool leftEdgeIsColliding;
+	bool rightEdgeIsColliding;
+	bool topEdgeIsColliding;
+	bool bottomEdgeIsColliding;
+
 };
