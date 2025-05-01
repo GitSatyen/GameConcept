@@ -1,16 +1,17 @@
 TO DO
 
-Make the player attack:
-	-Take a turn of the player
-	*Fix the grid skipping
-
--> Add pause to menu to quit or restart
-
+Add sounds:
+	-Add background music
+	-Add movement sound
+	-Add attacking sound
+	-Add killing sound (enemie dying)
+	-Add game over sound
+	-Add game win sound
+-> 
+Add a Start and End screen
 
 **If evertyhing is implemented
 Add more Levels:
 	-Create more levels and parse them in
 	-Make use of spikes
 	-Clear the image and display the next level
-
-	

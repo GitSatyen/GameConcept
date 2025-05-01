@@ -542,3 +542,24 @@ void Level::gameOver(sf::RenderWindow& window)
 
 	window.draw(text);
 }
+
+void Level::gamePaused(sf::RenderWindow& window)
+{
+	text.setFont(font);
+	text.setString("Continue [ESC]\nRestart [R]\nQuit [Q]");
+	text.setCharacterSize(24);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Bold);
+
+	// Center text
+	sf::FloatRect textBounds = text.getLocalBounds();
+	text.setOrigin(textBounds.width / 2, textBounds.height / 2);
+	text.setPosition(window.getView().getCenter());
+
+	// Draw transparent background
+	sf::RectangleShape background(window.getView().getSize());
+	background.setFillColor(sf::Color(0, 0, 0, 200));
+	window.draw(background);
+
+	window.draw(text);
+}

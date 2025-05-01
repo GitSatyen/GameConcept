@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Level.h"
 #include "Enemy.h"
+#include "GameStates.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
 #include <vector>
@@ -211,7 +212,7 @@ void Player::Movement(float deltaTime)
 	if (state == State::Attack) { return; }
 
 	//Prevent player from moving when he has won
-	if (levelRef && (levelRef->hasWon || levelRef->hasLost)) {
+	if (levelRef && (levelRef->hasWon || levelRef->hasLost) || paused) {
 		return;
 	}
 

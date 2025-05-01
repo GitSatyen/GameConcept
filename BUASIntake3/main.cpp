@@ -5,8 +5,10 @@
 #include "Level.h"
 #include "Enemy.h"
 #include "Princess.h"
+#include "GameStates.h"
 #include "LDtkLoader/Project.hpp"
 
+bool paused = false;
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");
     // Set minimum size (will enforce through event handling)
@@ -18,6 +20,7 @@ int main() {
     Level level("Assets/BG/Levels.ldtk", window);
     sf::Clock clock;
     bool isFullscreen = false;
+    
 
     // Pass references to the Level (containing collission logic)
     level.setPlayer(&player);
@@ -51,6 +54,7 @@ int main() {
     //Deepseek solution
     // Initial game setup function
     auto setupGame = [&]() {
+        paused = false;
         level.resetGameState();
         player.setStartPosition(level.getPlayerStartPosition());
         princess.setPosition(level.getPrincessPosition());
@@ -78,6 +82,11 @@ int main() {
                 if (event.key.code == sf::Keyboard::R) {
                     setupGame();
                 }
+
+                if (event.key.code == sf::Keyboard::Escape) {
+                    paused = !paused;
+                }
+
                 //Handle game state transitions
                 if (level.hasWon || level.hasLost) {
                     
@@ -130,6 +139,10 @@ int main() {
         else if (level.hasLost) {
             level.gameOver(window);
             player.draw(window);
+        }
+        else if (paused) {
+            level.gamePaused(window);
+            //player.draw(window);
         }
         window.display();
     }

@@ -41,6 +41,7 @@ public:
 
 	void gameWon(sf::RenderTarget& window);
 	void gameOver(sf::RenderWindow& window);
+	void gamePaused(sf::RenderWindow& window);
 
 	void resetGameState();
 	void clearEnemies() { enemies.clear(); }
