@@ -265,32 +265,19 @@ void Player::Movement(float deltaTime)
 			moved = true;
 		}
 
+		//Make sure player can't move outside the WalkingGround layer
 		if (moved && level && level->isWalkingGround(newGridPosition.x, newGridPosition.y)) {
 			//Check for enemy FIRST before attacking
 			Enemy* targetEnemy = level->getEnemyAtGrid(newGridPosition.x, newGridPosition.y);
-
-			if (targetEnemy && targetEnemy->getState() != Enemy::State::Dead) {
-				// Initiate attack without moving
-				std::cout << "Attacking enemy at (" << newGridPosition.x << ", " << newGridPosition.y << ")\n";
-				setState(State::Attack);
-				attackTargetGrid = newGridPosition;
-				isAttacking = true;
-				targetEnemy->setState(Enemy::State::Dead);
-				keyProcessed = true; //Prevent movement until attack completes
-				requireKeyRelease = true; //Require key release after attack
-				return;
-			}
-			else if(level->isWalkingGround(newGridPosition.x, newGridPosition.y)){
-				gridPosition = newGridPosition;
-				targetPosition = sf::Vector2f(
-					newGridPosition.x * tileSize + tileSize / 2.0f,
-					newGridPosition.y * tileSize + tileSize / 2.0f
-				);
-				isMoving = true;
-				setState(State::Running);
-				turns--;
-				keyProcessed = true; //Decrease a turn on movement
-			}
+			gridPosition = newGridPosition;
+			targetPosition = sf::Vector2f(
+				newGridPosition.x * tileSize + tileSize / 2.0f,
+				newGridPosition.y * tileSize + tileSize / 2.0f
+			);
+			isMoving = true;
+			setState(State::Running);
+			turns--;
+			keyProcessed = true; //Decrease a turn on movement
 		}
 	}
 	//Deepseek solution
