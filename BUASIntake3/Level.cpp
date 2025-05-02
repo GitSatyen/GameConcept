@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Princess.h"
 #include "Enemy.h"
+#include "Objects.h"
 #include "SFML/Graphics/Sprite.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include <filesystem>
@@ -85,7 +86,8 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	world(project.allWorlds().empty() ? throw std::runtime_error("No worlds found in LDtk project") : project.allWorlds()[0]),
 	level(world.allLevels().empty() ? throw std::runtime_error("No levels found in world") : world.allLevels()[0]),
 	hasWon(false),
-	hasLost(false)
+	hasLost(false),
+	enemiesCleared(false)
 {
 	//Load Font
 	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
@@ -127,6 +129,7 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 					std::cout << "Field " << field.name, "= ", field.type;
 				}
 
+				//Get position of all enemies
 				if (entity.getName() == "Enemy") {
 					sf::Vector2f pos(
 						entity.getPosition().x + entity.getSize().x / 2.0f,
@@ -134,6 +137,14 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 					);
 					enemyPositions.push_back(pos);
 				}
+				//Get position of all objects
+				/*if (entity.getName() == "Obstacle") {
+					sf::Vector2f pos(
+						entity.getPosition().x + entity.getSize().x / 2.0f,
+						entity.getPosition().y + entity.getSize().y / 2.0f
+					);
+					objectPositions.push_back(pos);
+				}*/
 			}
 		}
 	}
@@ -150,7 +161,7 @@ void Level::draw(sf::RenderTarget& image)
 
 	//Keep track of grid positions where we've already drawn a dot
 	std::set<std::pair<int, int>> drawn_positions;
-	
+	//Draw all tiles
 	for (const auto& tile : bg_layer.allTiles()) {
 		// Get the grid position of the tile
 		int grid_x = tile.getGridPosition().x;
@@ -263,12 +274,15 @@ bool Level::isWalkingGround(int gridX, int gridY) const
 			std::cout << "Out of bounds: (" << gridX << ", " << gridY << ")\n";
 			return false;
 		}
+		// Check if the tile is walkable (not blocked in WalkingGround layer)
 		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+		// Check if there's an object at this grid position
+		bool hasObject = (getObjectAtGrid(gridX, gridY) != nullptr);
 		std::cout << "Tile (" << gridX << "," << gridY << "): "
 			<< (isWalkable ? "Walkable" : "Blocked") << "\n";
 
 		// Return when tile is walkable (value != -1)
-		return (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+		return (walkingLayer.getIntGridVal(gridX, gridY).value != -1) && !hasObject;
 
 	}
 	catch (const std::exception& e) {
@@ -317,6 +331,16 @@ Enemy* Level::getEnemyAtGrid(int gridX, int gridY) const
 	return nullptr;
 }
 
+Objects* Level::getObjectAtGrid(int gridX, int gridY) const
+{
+	for (Objects* object : objects) {
+		if (object && object->getGridPosition().x == gridX && object->getGridPosition().y == gridY) {
+			return object;
+		}
+	}
+	return nullptr;
+}
+
 void Level::setPlayer(Player* playerRef)
 {
 	player = playerRef;
@@ -332,6 +356,11 @@ void Level::setEnemy(Enemy* EnemyRef)
 	enemies.push_back(EnemyRef);
 }
 
+void Level::setObject(Objects* ObjectRef)
+{
+	objects.push_back(ObjectRef);
+}
+
 
 void Level::updateCollision(float deltaTime)
 {
@@ -345,9 +374,16 @@ void Level::updateCollision(float deltaTime)
 	//When colliding with Princess
 	if (player && princess) {
 		bool coll_With_Princess = player->checkCollsion(princess->getCollider());
-		if (coll_With_Princess) {
+		//Player wins when all enemies are cleared
+		if (coll_With_Princess && enemiesCleared) {
 			hasWon = true;
 			std::cout << "Princess saved!\n";
+		}
+		//Dies if they aren't all cleared
+		else if (coll_With_Princess && !enemiesCleared) {
+			hasLost = true;
+			player->isDead = true;
+			player->setState(Player::State::Dead);
 		}
 	}
 
@@ -455,6 +491,11 @@ void Level::updateCollision(float deltaTime)
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
 		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}),
 		enemies.end());
+
+	enemiesCleared = enemies.empty();
+#ifndef NDEBUG
+	if (enemiesCleared) { std::cout << "Enemies Cleared\n"; }
+#endif
 }
 
 void Level::playerTurnCountDown(sf::RenderTarget& window, int countdown)

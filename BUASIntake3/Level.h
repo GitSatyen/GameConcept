@@ -8,6 +8,7 @@
 class Player;
 class Princess;
 class Enemy;
+class Objects;
 
 class Level
 {
@@ -32,9 +33,13 @@ public:
 	const std::vector<sf::Vector2f>& getEnemyPositions() const { return enemyPositions; }
 	Enemy* getEnemyAtGrid(int gridX, int gridY) const;
 
+	const std::vector<sf::Vector2f>& getObjectPositions() const { return objectPositions; }
+	Objects* getObjectAtGrid(int gridX, int gridY) const;
+
 	void setPlayer(Player* playerRef);
 	void setPrincess(Princess* princessRef);
 	void setEnemy(Enemy* EnemyRef);
+	void setObject(Objects* ObjectRef);
 
 	void updateCollision(float deltaTime);
 	void playerTurnCountDown(sf::RenderTarget& window, int countdown);
@@ -47,6 +52,7 @@ public:
 
 	void resetGameState();
 	void clearEnemies() { enemies.clear(); }
+	void clearObjects() { objects.clear(); }
 
 	bool getcolldingWithEnemy() const { return colldingWithEnemy; }
 	bool isLeftEdgeColliding() const { return leftEdgeIsColliding; }
@@ -57,6 +63,7 @@ public:
 	bool hasWon;
 	bool hasLost;
 	bool reset = false;
+	bool enemiesCleared;
 
 private:
 	ldtk::Project project;
@@ -65,8 +72,10 @@ private:
 	Player* player = nullptr;
 	Princess* princess = nullptr;
 	std::vector<Enemy*> enemies;
+	std::vector<Objects*> objects;
 
 	std::vector<sf::Vector2f> enemyPositions;
+	std::vector<sf::Vector2f> objectPositions;
 	
 	sf::Font font;
 	sf::Text text;

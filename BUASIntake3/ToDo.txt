@@ -1,9 +1,8 @@
 TO DO
 
-Player has to kill all enemies or he's dead
-->
 Add objects:
-	Player can't move through objects
+	-Draw the objects on screen
+	-Player can't move through objects
 -> 
 Change the turns amount to challenge to player
 
@@ -18,6 +17,7 @@ Add sounds:
 
 **If evertyhing is implemented
 Add more Levels:
+	-Make the level fit in fullscreen mode
 	-Create more levels and parse them in
 	-Make use of spikes
 	-Clear the image and display the next level

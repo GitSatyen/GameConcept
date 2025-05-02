@@ -1,61 +1,31 @@
-#include "Princess.h"
+#include "Objects.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Image.hpp> 
+#include <SFML/Graphics/Sprite.hpp>
+#include "Level.h"
 
-std::map <Princess::State, std::string> stateMap = {
-	{Princess::State::None, "None"},
-	{Princess::State::Idle, "Idle"}
-};
-
-Princess::Princess()
+Objects::Objects()
 {
 	sourceImage = sf::Vector2i(0, 0);
 	frameTime = 0.0f;
 	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
-	if (!IdleAnim.loadFromFile("Assets/Princess/Idle.png")) {
+	if (!IdleAnim.loadFromFile("Assets/Props/barrel.png")) {
 		printf("Failed to load sprite texture\n");
 	}
-
 	else {
 		printf("Sprite Found\n");
-		IdleAnim.setSmooth(false);
-		IdleAnim.setRepeated(false);
-		//Place texture in sprite object
-		sprite.setTexture(IdleAnim);
-		//Set first frame of the animation
 		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
-		printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
 	}
 
 	// Center the sprite origin
 	sprite.setOrigin( //Adjusting both values to fit inside Entity grid
 		sprite.getLocalBounds().width / 2.0f,
 		sprite.getLocalBounds().height / 1.4f);
-
-	//Resizing enemy and adjusting sprite orientation to face right
-	sprite.setScale(-std::abs(scale), scale);
-
-	//Set Idle as default State
-	setState(State::Idle);
 }
 
-void Princess::setState(State newState)
-{
-	if (newState != state)
-	{
-		switch (newState)
-		{
-			//Calls action when traniston away from state
-		case State::Idle:
-			break;
-		}
-		state = newState;
-	}
-}
-
-void Princess::draw(sf::RenderTarget& image)
+void Objects::draw(sf::RenderTarget& image)
 {
 	image.draw(sprite);
 
@@ -71,7 +41,7 @@ void Princess::draw(sf::RenderTarget& image)
 #endif
 }
 
-void Princess::update(float deltaTime)
+void Objects::update(float deltaTime)
 {
 	//Animate sprite frame by frame
 	frameTime += deltaTime;
@@ -100,18 +70,23 @@ void Princess::update(float deltaTime)
 #endif
 }
 
-void Princess::setPosition(const sf::Vector2f& position)
+void Objects::setPosition(const sf::Vector2f& position)
 {
-	sf::Vector2f centeredPos(std::round(position.x), (position.y));
-	sprite.setPosition(centeredPos);
+	/*sf::Vector2f centeredPos(
+		position.x + tileSize / 2.0f,
+		position.y + tileSize / 2.0f
+	);*/
+	sprite.setPosition(position);
+	gridPosition.x = static_cast<int>(position.x / tileSize);
+	gridPosition.y = static_cast<int>(position.y / tileSize);
 }
 
-void Princess::setLevel(const Level& levelRef)
+void Objects::setLevel(const Level& levelRef)
 {
 	tileSize = levelRef.getWalkingGroundCellSize();
 }
 
-sf::FloatRect Princess::getCollider() const
+sf::FloatRect Objects::getCollider() const
 {
 	// Custom collider dimensions (adjust these to match your sprite)
 	const float colliderWidth = 32.0f;

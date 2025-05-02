@@ -227,10 +227,12 @@ void Player::Movement(float deltaTime)
 		return;
 	}
 
+#ifndef NDEBUG 
 	// Check edge collisions via Level's getters
 	if (levelRef->isRightEdgeColliding()) {
 		std::cout << "Player's right edge is colliding with an enemy!\n";
 	}
+#endif // !NDEBUG 
 	
 	if (!keyProcessed && state != State::Attack) {
 		sf::Vector2i newGridPosition = gridPosition;

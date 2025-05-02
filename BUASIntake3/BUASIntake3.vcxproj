@@ -170,6 +170,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Objects.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Princess.cpp" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="GameStates.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="Objects.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Princess.h" />
   </ItemGroup>

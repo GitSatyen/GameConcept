@@ -3,24 +3,11 @@
 #include <SFML/Graphics/Image.hpp> 
 #include <SFML/Graphics/Sprite.hpp>
 #include "Level.h"
-
-class Princess
+class Objects
 {
 public:
-	enum class State
-	{
-		None,
-		Idle,
-	};
-	//Default constuctor
-	Princess();
-	void setState(State newState);
-
-	State getState() const noexcept
-	{
-		return state;
-	}
-
+	//Default Constructor
+	Objects();
 	void draw(sf::RenderTarget& image);
 	void update(float deltaTime);
 	void doAnime(float deltaTime);
@@ -28,11 +15,9 @@ public:
 	void setLevel(const Level& levelRef);
 
 	sf::FloatRect getCollider() const;
-	//bool checkCollsion(const sf::FloatRect& rect);
+	sf::Vector2i getGridPosition() const { return gridPosition; }
 
 private:
-	State state = State::None;
-
 	sf::Texture IdleAnim;
 	sf::Sprite sprite; // Empty sprite object
 

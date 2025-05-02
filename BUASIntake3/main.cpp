@@ -6,6 +6,7 @@
 #include "Level.h"
 #include "Enemy.h"
 #include "Princess.h"
+#include "Objects.h"
 #include "GameStates.h"
 #include "LDtkLoader/Project.hpp"
 
@@ -21,6 +22,7 @@ int main() {
     Player player;
     Princess princess;
     std::vector<Enemy> enemies;
+    std::vector<Objects> objects;
     Level level("Assets/BG/Levels.ldtk", window);
     sf::Clock clock;
     bool isFullscreen = false;
@@ -28,7 +30,6 @@ int main() {
 
     //auto startScreen;
     
-
     // Pass references to the Level (containing collission logic)
     level.setPlayer(&player);
     level.setPrincess(&princess);
@@ -53,6 +54,16 @@ int main() {
         level.setEnemy(&enemies.back());
     }
 
+    //Do same for objects
+    objects.reserve(level.getObjectPositions().size());
+    //Set positions of enemies
+    for (const auto& pos : level.getObjectPositions()) {
+        objects.emplace_back();
+        objects.back().setLevel(level);
+        objects.back().setPosition(pos);
+        level.setObject(&objects.back());
+    }
+
     //Debugging player start spawn point
     sf::Vector2f startPos = level.getPlayerStartPosition();
     std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
@@ -65,8 +76,10 @@ int main() {
         level.resetGameState();
         player.setStartPosition(level.getPlayerStartPosition());
         princess.setPosition(level.getPrincessPosition());
+        objects.clear();
         enemies.clear(); //Clear existing enemies
         level.clearEnemies();
+        level.clearObjects();
 
         //Recreate enemies from their positions
         enemies.reserve(level.getEnemyPositions().size());
@@ -75,6 +88,14 @@ int main() {
             enemies.back().setPosition(pos);
             enemies.back().setLevel(level);
             level.setEnemy(&enemies.back());
+        }
+        //Do same for objects
+        objects.reserve(level.getObjectPositions().size());
+        for (const auto& pos : level.getObjectPositions()) {
+            objects.emplace_back();
+            objects.back().setPosition(pos);
+            objects.back().setLevel(level);
+            level.setObject(&objects.back());
         }
     };
     setupGame();
@@ -200,6 +221,10 @@ int main() {
             for (auto& enemy : enemies) {
                 enemy.update(deltaTime);
                 enemy.draw(window);
+            }
+            for (auto& object : objects) {
+                object.update(deltaTime);
+                object.draw(window);
             }
 
             //Initilize game functions
