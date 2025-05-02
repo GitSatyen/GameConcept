@@ -39,9 +39,11 @@ public:
 	void updateCollision(float deltaTime);
 	void playerTurnCountDown(sf::RenderTarget& window, int countdown);
 
+	//Game UI (should put this Game class)
 	void gameWon(sf::RenderTarget& window);
 	void gameOver(sf::RenderWindow& window);
 	void gamePaused(sf::RenderWindow& window);
+	void gameInstructions(sf::RenderWindow& window);
 
 	void resetGameState();
 	void clearEnemies() { enemies.clear(); }

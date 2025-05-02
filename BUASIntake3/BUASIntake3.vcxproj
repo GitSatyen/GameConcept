@@ -104,7 +104,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,7 +124,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkloader.lib;LDtkLoader-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;ldtkloader.lib;ldtkloader.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;LDtkloader.lib;LDtkLoader-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;ldtkloader.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -139,7 +139,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Debug;C:\Users\anoep\vcpkg\installed\x64-windows\include</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;LDtkLoader-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +159,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>SFML\SFML-2.6.2\lib;inc\LDtkLoader-1.5.2\build\lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;LDtkloader.lib;LDtkLoader-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;ldtkloader.lib;ldtkloader.lib</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;LDtkloader.lib;LDtkLoader-d.lib;sfml-graphics.lib;sfml-window.lib;sfml-system.lib;sfml-audio.lib;ldtkloader.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

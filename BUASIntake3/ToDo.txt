@@ -1,5 +1,12 @@
 TO DO
 
+Player has to kill all enemies or he's dead
+->
+Add objects:
+	Player can't move through objects
+-> 
+Change the turns amount to challenge to player
+
 Add sounds:
 	-Add background music
 	-Add movement sound
@@ -8,10 +15,10 @@ Add sounds:
 	-Add game over sound
 	-Add game win sound
 -> 
-Add a Start and End screen
 
 **If evertyhing is implemented
 Add more Levels:
 	-Create more levels and parse them in
 	-Make use of spikes
 	-Clear the image and display the next level
+	-Add an End screen

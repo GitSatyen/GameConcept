@@ -498,16 +498,24 @@ void Level::gameWon(sf::RenderTarget& window)
 		return;
 	}
 
+	sf::Text options;
 	std::cout << "You win!\n";
+	options.setFont(font);
 	text.setFont(font);
+	
+	options.setString("Quit [Q]");
 	text.setString("You win!");
+	
+	options.setCharacterSize(20);
 	text.setCharacterSize(48);
+	
 	text.setFillColor(sf::Color::White);
 	text.setStyle(sf::Text::Bold);
 
 	// Center the text in the view
 	sf::Vector2f winCenter = window.getView().getCenter();
 	text.setPosition(winCenter.x - 100, winCenter.y);
+	options.setPosition(winCenter.x - 50, winCenter.y + 100);
 #ifndef NDEGUG
 	std::cout << "Text position: " << text.getPosition().x
 		<< ", " << text.getPosition().y << "\n";
@@ -520,6 +528,7 @@ void Level::gameWon(sf::RenderTarget& window)
 
 	// Draw the text
 	window.draw(text);
+	window.draw(options);
 }
 
 void Level::gameOver(sf::RenderWindow& window)
@@ -546,7 +555,7 @@ void Level::gameOver(sf::RenderWindow& window)
 void Level::gamePaused(sf::RenderWindow& window)
 {
 	text.setFont(font);
-	text.setString("Continue [ESC]\nRestart [R]\nQuit [Q]");
+	text.setString("Continue [ESC]\nRestart [R]\nInstructions [F]\nQuit [Q]");
 	text.setCharacterSize(24);
 	text.setFillColor(sf::Color::White);
 	text.setStyle(sf::Text::Bold);
@@ -554,6 +563,34 @@ void Level::gamePaused(sf::RenderWindow& window)
 	// Center text
 	sf::FloatRect textBounds = text.getLocalBounds();
 	text.setOrigin(textBounds.width / 2, textBounds.height / 2);
+	text.setPosition(window.getView().getCenter());
+
+	// Draw transparent background
+	sf::RectangleShape background(window.getView().getSize());
+	background.setFillColor(sf::Color(0, 0, 0, 200));
+	window.draw(background);
+
+	window.draw(text);
+}
+
+void Level::gameInstructions(sf::RenderWindow& window)
+{
+	text.setFont(font);
+	text.setString(R"(
+					 Use the arrow keys to move 
+                     Don't turn out of turns!
+					 Defeat all enemies to please the princess!
+					 Restart [R]
+					 Quit [Q]
+					 
+					 Close [F])");
+	text.setCharacterSize(15);
+	text.setFillColor(sf::Color::White);
+	text.setStyle(sf::Text::Bold);
+
+	// Center text
+	sf::FloatRect textBounds = text.getLocalBounds();
+	text.setOrigin((textBounds.width / 2) + 50, textBounds.height / 2);
 	text.setPosition(window.getView().getCenter());
 
 	// Draw transparent background

@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream> 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Player.h"
 #include "Level.h"
 #include "Enemy.h"
@@ -9,8 +10,11 @@
 #include "LDtkLoader/Project.hpp"
 
 bool paused = false;
+bool showInstructions = false;
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Save the princess");
+    int SCREEN_WIDTH = 800;
+    int SCREEN_HEIGHT = 600;
+    sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Midnight Turns");
     // Set minimum size (will enforce through event handling)
     sf::Vector2u minWindowSize(400, 300);
 
@@ -20,6 +24,9 @@ int main() {
     Level level("Assets/BG/Levels.ldtk", window);
     sf::Clock clock;
     bool isFullscreen = false;
+    Status status = Status::Start;
+
+    //auto startScreen;
     
 
     // Pass references to the Level (containing collission logic)
@@ -72,6 +79,19 @@ int main() {
     };
     setupGame();
 
+    //Sound properties
+    //sf::Music bgMusic;
+    //if (!bgMusic.openFromFile("Assets/Sounds/bg-music.mp3")) {
+    //    std::cerr << "Error: Could not load background music." << std::endl;
+    //}
+
+    //bgMusic.setLoop(true);     // Optional: loop the music
+    //bgMusic.setVolume(50);     // Optional: set volume (0-100)
+    //bgMusic.play();            // Start playing the music
+
+    //// Keep the program running to hear the musicgithub
+    //sf::sleep(sf::seconds(10));
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -79,21 +99,27 @@ int main() {
                 window.close();
             }
             else if (event.type == sf::Event::KeyPressed) {
+                // Start the game
+                if (event.key.code == sf::Keyboard::Space && status == Status::Start) {
+                    status = Status::Playing;
+                }
+                //Press R to reset game
                 if (event.key.code == sf::Keyboard::R) {
                     setupGame();
                 }
-
+                //Press escape to pause/unpause game
                 if (event.key.code == sf::Keyboard::Escape) {
                     paused = !paused;
                 }
-
-                //Handle game state transitions
-                if (level.hasWon || level.hasLost) {
-                    
-                    if (event.key.code == sf::Keyboard::Q) {
-                        window.close();
-                    }
+                //Press F to open/close instructions
+                if (event.key.code == sf::Keyboard::F && (status == Status::Start || status == Status::Playing || paused)) {
+                    showInstructions = !showInstructions;
                 }
+                //Press Q to quit
+                if (event.key.code == sf::Keyboard::Q) {
+                    window.close();
+                }
+        
                 //Handle fulscreen mode
                 if (event.key.code == sf::Keyboard::F11) {
                     isFullscreen = !isFullscreen;
@@ -116,34 +142,93 @@ int main() {
             level.updateCollision(deltaTime);
         }
 
-        window.setView(level.getGameView());
-        window.clear(sf::Color::Black);
-        //Draw map and objects
-        level.draw(window);
-        player.update(deltaTime);
-        player.draw(window);
-        princess.update(deltaTime);
-        princess.draw(window);
-        for (auto& enemy : enemies) {
-            enemy.update(deltaTime);
-            enemy.draw(window);
-        }
-
-        //Initilize game functions
-        // Always draw UI elements
-        level.playerTurnCountDown(window, player.turns);
-
-        if (level.hasWon) {
-            level.gameWon(window);
-        }
-        else if (level.hasLost) {
-            level.gameOver(window);
+        switch (status)
+        {
+        case Status::Start:{ //Handle start screen
+                //Black background
+                window.clear(sf::Color::Black);
+                //Text startscreen
+                sf::Text title;
+                sf::Text startText;
+                sf::Text instructionsOption;
+                sf::Font font;
+                if (font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
+                {
+                    //Set font
+                    title.setFont(font);
+                    startText.setFont(font);
+                    instructionsOption.setFont(font);
+                    //Set text strings
+                    title.setString("Midnight Turns");
+                    startText.setString("Press SPACE to start!");
+                    instructionsOption.setString("Instructions [F]");
+                    //Set text size
+                    title.setCharacterSize(50);
+                    startText.setCharacterSize(24);
+                    instructionsOption.setCharacterSize(24);
+                    //Set text positions
+                    title.setPosition(170, 200);
+                    startText.setPosition(250, 500);
+                    instructionsOption.setPosition(250, 530);
+                    //Set text color
+                    title.setFillColor(sf::Color::Red);
+                    //Draw text
+                    window.draw(title);
+                    window.draw(startText);
+                    window.draw(instructionsOption);
+                }
+                //Draw instructions if F is pressed
+                if (showInstructions) {
+                    level.gameInstructions(window); 
+                }
+                else {
+                    std::cerr << "Font not found\n";
+                    //status = Status::Playing;
+                }
+            }
+            break;
+        //Display level and game objects and handles other game logic
+        case Status::Playing: 
+            window.setView(level.getGameView());
+            window.clear(sf::Color::Black);
+            //Draw map and objects
+            level.draw(window);
+            player.update(deltaTime);
             player.draw(window);
+            princess.update(deltaTime);
+            princess.draw(window);
+            for (auto& enemy : enemies) {
+                enemy.update(deltaTime);
+                enemy.draw(window);
+            }
+
+            //Initilize game functions
+            //Always draw UI elements
+            level.playerTurnCountDown(window, player.turns);
+
+            //Do game win/lose/pause conditions 
+            if (level.hasWon) {
+                level.gameWon(window);
+            }
+            else if (level.hasLost) {
+                level.gameOver(window);
+                player.draw(window);
+            }
+            else if (paused) {
+                if (showInstructions) {
+                    level.gameInstructions(window);
+                }
+                else {
+                    level.gamePaused(window);
+                }
+            }
+            break;
+        case Status::End:
+            break;
+        default:
+            break;
         }
-        else if (paused) {
-            level.gamePaused(window);
-            //player.draw(window);
-        }
+        
         window.display();
     }
     return 0;
