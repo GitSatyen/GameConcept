@@ -387,9 +387,7 @@ void Level::updateCollision(float deltaTime)
 		}
 	}
 
-	//**ADJUST THIS BROKEN MESS**
 	//When colliding with an Enemy
-	// When colliding with an Enemy
 	if (player) {
 		for (Enemy* enemy : enemies) {
 			if (enemy && enemy->getState() != Enemy::State::Dead) {
@@ -526,7 +524,11 @@ void Level::resetGameState()
 		player->resetAnimationFrame();
 		player->resetFrameTimer();
 		player->setStartPosition(getPlayerStartPosition());
-		player->turns = 32;
+		player->turns = 17;
+#ifndef NDEBUG
+		player->turns = 50;
+#endif // !NDEBUG
+
 		player->setState(Player::State::Idle);
 	}
 }

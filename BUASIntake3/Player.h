@@ -3,6 +3,7 @@
 #include <SFML/Graphics/Image.hpp> 
 #include <SFML/Graphics/Sprite.hpp>
 #include "Level.h"
+#include "SoundManager.h"
 
 class Player
 {
@@ -39,6 +40,8 @@ public:
 	void doAttack(float deltaTime);
 	void doHurt(float deltaTime);
 	void doDead(float deltaTime);
+
+	//void setGameRefrence(Game* gameRef) { game = gameRef; }
 
 	void setStartPosition(const sf::Vector2f& position);
 	sf::Vector2f getPosition() const;
@@ -77,6 +80,7 @@ private:
 	//Pointer Level class
 	const Level* level = nullptr;
 	Level* levelRef = nullptr; //Modiviable value
+	SoundManager sounds;
 
 	State state = State::None;
 

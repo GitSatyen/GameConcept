@@ -76,6 +76,7 @@ void Player::setState(State newState)
 			break;
 		case State::Running:
 			sprite.setTexture(RunAnim);
+			sounds.playSound(SoundManager::SoundType::MOVE);
 			break;
 		case State::Attack:
 			sprite.setTexture(AttackAnim);

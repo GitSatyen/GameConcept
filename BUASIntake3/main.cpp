@@ -2,30 +2,37 @@
 #include <iostream> 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include "Game.h"
 #include "Player.h"
 #include "Level.h"
 #include "Enemy.h"
 #include "Princess.h"
 #include "Objects.h"
 #include "GameStates.h"
+#include "SoundManager.h"
 #include "LDtkLoader/Project.hpp"
 
 bool paused = false;
 bool showInstructions = false;
+bool musicStarted = false;
 int main() {
+    //Game window values
+    bool isFullscreen = false;
     int SCREEN_WIDTH = 800;
     int SCREEN_HEIGHT = 600;
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Midnight Turns");
     // Set minimum size (will enforce through event handling)
     sf::Vector2u minWindowSize(400, 300);
-
+   
+    //Game class declerations 
     Player player;
     Princess princess;
     std::vector<Enemy> enemies;
     std::vector<Objects> objects;
     Level level("Assets/BG/Levels.ldtk", window);
+    Game game(level, player, princess, enemies, objects);
+    SoundManager soundmanager;
     sf::Clock clock;
-    bool isFullscreen = false;
     Status status = Status::Start;
 
     //auto startScreen;
@@ -43,76 +50,22 @@ int main() {
     princess.setLevel(level);
     princess.setPosition(level.getPrincessPosition());
 
-    //Deepseek fix
-    // Reserve space to avoid reallocation
-    enemies.reserve(level.getEnemyPositions().size());
-    //Set positions of enemies
-    for (const auto& pos : level.getEnemyPositions()) {
-        enemies.emplace_back();
-        enemies.back().setPosition(pos);
-        enemies.back().setLevel(level);
-        level.setEnemy(&enemies.back());
-    }
-
-    //Do same for objects
-    objects.reserve(level.getObjectPositions().size());
-    //Set positions of enemies
-    for (const auto& pos : level.getObjectPositions()) {
-        objects.emplace_back();
-        objects.back().setLevel(level);
-        objects.back().setPosition(pos);
-        level.setObject(&objects.back());
-    }
-
     //Debugging player start spawn point
     sf::Vector2f startPos = level.getPlayerStartPosition();
     std::cout << "Start position: " << startPos.x << ", " << startPos.y << std::endl;
-    std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;
+    std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;  
 
-    //Deepseek solution
-    // Initial game setup function
-    auto setupGame = [&]() {
-        paused = false;
-        level.resetGameState();
-        player.setStartPosition(level.getPlayerStartPosition());
-        princess.setPosition(level.getPrincessPosition());
-        objects.clear();
-        enemies.clear(); //Clear existing enemies
-        level.clearEnemies();
-        level.clearObjects();
-
-        //Recreate enemies from their positions
-        enemies.reserve(level.getEnemyPositions().size());
-        for (const auto& pos : level.getEnemyPositions()) {
-            enemies.emplace_back();
-            enemies.back().setPosition(pos);
-            enemies.back().setLevel(level);
-            level.setEnemy(&enemies.back());
-        }
-        //Do same for objects
-        objects.reserve(level.getObjectPositions().size());
-        for (const auto& pos : level.getObjectPositions()) {
-            objects.emplace_back();
-            objects.back().setPosition(pos);
-            objects.back().setLevel(level);
-            level.setObject(&objects.back());
-        }
-    };
-    setupGame();
-
-    //Sound properties
-    //sf::Music bgMusic;
-    //if (!bgMusic.openFromFile("Assets/Sounds/bg-music.mp3")) {
-    //    std::cerr << "Error: Could not load background music." << std::endl;
-    //}
-
-    //bgMusic.setLoop(true);     // Optional: loop the music
-    //bgMusic.setVolume(50);     // Optional: set volume (0-100)
-    //bgMusic.play();            // Start playing the music
-
-    //// Keep the program running to hear the musicgithub
-    //sf::sleep(sf::seconds(10));
-
+    sf::Music music;
+    if (!music.openFromFile("Assets/Sounds/bg-music.wav")) {
+        std::cerr << "Error loading file!" << std::endl;
+        return 1;
+    }
+    music.setLoop(true);  
+    music.setVolume(100);
+    
+    //Initialize entities
+    game.resetGame();
+    
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -126,7 +79,7 @@ int main() {
                 }
                 //Press R to reset game
                 if (event.key.code == sf::Keyboard::R) {
-                    setupGame();
+                    game.resetGame();
                 }
                 //Press escape to pause/unpause game
                 if (event.key.code == sf::Keyboard::Escape) {
@@ -246,6 +199,11 @@ int main() {
                 else {
                     level.gamePaused(window);
                 }
+            }
+            //Play background music
+            if (!musicStarted) {
+                music.play();
+                musicStarted = true;
             }
             break;
         case Status::End:
