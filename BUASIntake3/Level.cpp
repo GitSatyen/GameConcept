@@ -138,13 +138,13 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 					enemyPositions.push_back(pos);
 				}
 				//Get position of all objects
-				/*if (entity.getName() == "Obstacle") {
+				if (entity.getName() == "Obstacle") {
 					sf::Vector2f pos(
 						entity.getPosition().x + entity.getSize().x / 2.0f,
 						entity.getPosition().y + entity.getSize().y / 2.0f
 					);
 					objectPositions.push_back(pos);
-				}*/
+				}
 			}
 		}
 	}

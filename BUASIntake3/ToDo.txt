@@ -1,9 +1,6 @@
 TO DO
 
-Add objects:
-	-Draw the objects on screen
-	-Player can't move through objects
--> 
+
 Change the turns amount to challenge to player
 
 Add sounds:

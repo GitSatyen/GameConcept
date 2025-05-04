@@ -16,13 +16,14 @@ Objects::Objects()
 	}
 	else {
 		printf("Sprite Found\n");
-		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		sprite.setTexture(IdleAnim);
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 34, sourceImage.y * 34, 34, 34));
 	}
 
 	// Center the sprite origin
 	sprite.setOrigin( //Adjusting both values to fit inside Entity grid
 		sprite.getLocalBounds().width / 2.0f,
-		sprite.getLocalBounds().height / 1.4f);
+		sprite.getLocalBounds().height / 2.0f);
 }
 
 void Objects::draw(sf::RenderTarget& image)
@@ -48,17 +49,17 @@ void Objects::update(float deltaTime)
 	if (frameTime >= 0.2f) {
 		sourceImage.x++;
 		// Check sprite sheet width
-		if (sourceImage.x * 128 >= IdleAnim.getSize().x) {
+		if (sourceImage.x * 34 >= IdleAnim.getSize().x) {
 			sourceImage.x = 0;
 		}
 		//Draw first frame of the spritesheet
-		sprite.setTextureRect(sf::IntRect(sourceImage.x * 128, sourceImage.y * 128, 128, 128));
+		sprite.setTextureRect(sf::IntRect(sourceImage.x * 34, sourceImage.y * 34, 34, 34));
 		frameTime = 0.0f;
 	}
 #ifndef NDEBUG
 	const int frameWidth = 160;
 	const int totalFrames = 4;
-	const int frameHeight = 128; //Deepseek solution
+	const int frameHeight = 34; //Deepseek solution
 
 	/*printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
 	printf("Frame: %d, Texture Rect: (%d, %d, %d, %d)\n",
@@ -72,11 +73,9 @@ void Objects::update(float deltaTime)
 
 void Objects::setPosition(const sf::Vector2f& position)
 {
-	/*sf::Vector2f centeredPos(
-		position.x + tileSize / 2.0f,
-		position.y + tileSize / 2.0f
-	);*/
 	sprite.setPosition(position);
+
+	//Calculate grid position
 	gridPosition.x = static_cast<int>(position.x / tileSize);
 	gridPosition.y = static_cast<int>(position.y / tileSize);
 }
