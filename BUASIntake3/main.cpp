@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream> 
+#include <filesystem>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Game.h"
@@ -15,7 +16,12 @@
 bool paused = false;
 bool showInstructions = false;
 bool musicStarted = false;
-int main() {
+int main(int argc, char* argv[]) {
+    // Set working directory to the .exe's folder
+    std::filesystem::current_path(
+        std::filesystem::path(argv[0]).parent_path()
+    );
+
     //Game window values
     bool isFullscreen = false;
     int SCREEN_WIDTH = 800;
@@ -29,7 +35,7 @@ int main() {
     Princess princess;
     std::vector<Enemy> enemies;
     std::vector<Objects> objects;
-    Level level("Assets/BG/Levels.ldtk", window);
+    Level level("BUASIntake3/Assets/BG/Levels.ldtk", window);
     Game game(level, player, princess, enemies, objects);
     SoundManager soundmanager;
     sf::Clock clock;
@@ -56,7 +62,7 @@ int main() {
     std::cout << "Player position: " << player.getPosition().x << ", " << player.getPosition().y << std::endl;  
 
     sf::Music music;
-    if (!music.openFromFile("Assets/Sounds/bg-music.wav")) {
+    if (!music.openFromFile("BUASIntake3/Assets/Sounds/bg-music.wav")) {
         std::cerr << "Error loading file!" << std::endl;
         return 1;
     }
@@ -126,7 +132,7 @@ int main() {
                 sf::Text startText;
                 sf::Text instructionsOption;
                 sf::Font font;
-                if (font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
+                if (font.loadFromFile("BUASIntake3/Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
                 {
                     //Set font
                     title.setFont(font);

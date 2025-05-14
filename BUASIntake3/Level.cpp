@@ -90,7 +90,7 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	enemiesCleared(false)
 {
 	//Load Font
-	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
+	if (!font.loadFromFile("BUASIntake3/Assets/Fonts/trajan-pro/TrajanPro-Bold.otf")) {
 		std::cout << "ERROR: Couldn't load victory font\n";
 	}
 
@@ -106,7 +106,7 @@ Level::Level(const std::string& filepath, sf::RenderWindow& window) :
 	std::cout << "Level name: " << level.name << ", ID: " << level.iid << "\n";
 
 	//Load tileset
-	if (!tileset_texture.loadFromFile("Assets/BG/background.png")) {
+	if (!tileset_texture.loadFromFile("BUASIntake3/Assets/BG/background.png")) {
 		printf("Failed to load tileset texture");
 	}
 	tile_sprite.setTexture(tileset_texture);
@@ -535,7 +535,7 @@ void Level::resetGameState()
 
 void Level::gameWon(sf::RenderTarget& window)
 {
-	if (!font.loadFromFile("Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
+	if (!font.loadFromFile("BUASIntake3/Assets/Fonts/trajan-pro/TrajanPro-Bold.otf"))
 	{
 		std::cerr << "Font not found\n";
 		return;

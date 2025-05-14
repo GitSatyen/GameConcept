@@ -14,7 +14,7 @@ Princess::Princess()
 	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
-	if (!IdleAnim.loadFromFile("Assets/Princess/Idle.png")) {
+	if (!IdleAnim.loadFromFile("BUASIntake3/Assets/Princess/Idle.png")) {
 		printf("Failed to load sprite texture\n");
 	}
 

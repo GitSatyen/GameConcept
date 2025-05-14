@@ -17,7 +17,7 @@ Enemy::Enemy()
 	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
-	if (!IdleAnim.loadFromFile("Assets/Enemy/Idle.png")) {
+	if (!IdleAnim.loadFromFile("BUASIntake3/Assets/Enemy/Idle.png")) {
 		printf("Failed to load sprite texture\n");
 	} else {
 		printf("Sprite Found\n");
@@ -28,7 +28,7 @@ Enemy::Enemy()
 		printf("Texture Size: %dx%d\n", IdleAnim.getSize().x, IdleAnim.getSize().y);
 	}
 
-	if (!DeadAnim.loadFromFile("Assets/Enemy/Dead.png")) {
+	if (!DeadAnim.loadFromFile("BUASIntake3/Assets/Enemy/Dead.png")) {
 		printf("Failed to load sprite texture\n");
 	} else {
 		printf("Sprite Found\n");

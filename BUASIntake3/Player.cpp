@@ -23,16 +23,16 @@ Player::Player() : tileSize(32)
 	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
-	if (!IdleAnim.loadFromFile("Assets/Player/Idle.png")) {
+	if (!IdleAnim.loadFromFile("BUASIntake3/Assets/Player/Idle.png")) {
 		printf("Failed to load sprite texture\n");
 	}
-	if (!RunAnim.loadFromFile("Assets/Player/Walk.png")) {
+	if (!RunAnim.loadFromFile("BUASIntake3/Assets/Player/Walk.png")) {
 		printf("Failed to load sprite texture\n");
 	}
-	if (!AttackAnim.loadFromFile("Assets/Player/Attack_3.png")) {
+	if (!AttackAnim.loadFromFile("BUASIntake3/Assets/Player/Attack_3.png")) {
 		printf("Failed to load sprite texture\n");
 	}
-	if (!DeadAnim.loadFromFile("Assets/Player/Dead.png")) {
+	if (!DeadAnim.loadFromFile("BUASIntake3/Assets/Player/Dead.png")) {
 		printf("Failed to load sprite texture\n");
 	}
 

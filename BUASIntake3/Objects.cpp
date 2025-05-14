@@ -11,7 +11,7 @@ Objects::Objects()
 	velocity = sf::Vector2f(0.0f, 0.0f);
 
 	//Define texture sprites for player sprite object 
-	if (!IdleAnim.loadFromFile("Assets/Props/barrel.png")) {
+	if (!IdleAnim.loadFromFile("BUASIntake3/Assets/Props/barrel.png")) {
 		printf("Failed to load sprite texture\n");
 	}
 	else {
