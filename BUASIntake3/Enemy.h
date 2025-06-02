@@ -20,7 +20,7 @@ public:
 	Enemy();
 	void setState(State newState);
 
-	State getState() const noexcept
+	State getState() const noexcept //Make sure no exceptions are thrown when returning state
 	{
 		return state;
 	}

@@ -160,7 +160,11 @@ void Level::draw(sf::RenderTarget& image)
 	const auto& bg_layer = level.getLayer("BG");
 
 	//Keep track of grid positions where we've already drawn a dot
-	std::set<std::pair<int, int>> drawn_positions;
+	std::set<std::pair<int, int>> drawn_positions;  //drawn_positions is a set of unique(x, y) integer coordinate pairs.
+													//Each pair represents a position(possibly on a 2D grid or map).
+													//No two identical positions(e.g., { 2, 3 }) can exist in the set.
+													//The set keeps all the positions sorted, using the default lexicographical order of std::pair.
+	
 	//Draw all tiles
 	for (const auto& tile : bg_layer.allTiles()) {
 		// Get the grid position of the tile
