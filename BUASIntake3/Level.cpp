@@ -171,11 +171,12 @@ void Level::draw(sf::RenderTarget& image)
 		int grid_x = tile.getGridPosition().x;
 		int grid_y = tile.getGridPosition().y;
 
-		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size;
-		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size;
-		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size));
-		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size);
-		image.draw(tile_sprite);
+		//Determine where in the tileset image the tile's graphic is located.
+		int tileset_x = (tile.tileId % (tileset_texture.getSize().x / tile_size)) * tile_size; //Gives the column number (horizontal offset)
+		int tileset_y = (tile.tileId / (tileset_texture.getSize().x / tile_size)) * tile_size; //Gives the row number (vertical offset)
+		tile_sprite.setTextureRect(sf::IntRect(tileset_x, tileset_y, tile_size, tile_size)); //Set texture around each tile
+		tile_sprite.setPosition(tile.getGridPosition().x * tile_size, tile.getGridPosition().y * tile_size); //Position each tile within the given positions
+		image.draw(tile_sprite); //Draw all tiles as a whole tilemap
 	}
 
 	//Displays centerpoint of intGrid layer WalkingGround
@@ -188,6 +189,7 @@ void Level::draw(sf::RenderTarget& image)
 				const auto& value = walkingLayer.getIntGridVal(x, y).value;
 
 				if (value != -1) {
+					//Get the centerpoint of each cell of intGrid
 					float center_X = x * grid_size + grid_size / 2.0f;
 					float center_Y = y * grid_size + grid_size / 2.0f;
 #ifndef NDEBUG
@@ -245,6 +247,7 @@ void Level::draw(sf::RenderTarget& image)
 	}
 }
 
+//STILL IN PROGRESS
 void Level::Resize(sf::RenderWindow& window)
 {
 	//Get all window and level dimensions
@@ -279,9 +282,9 @@ bool Level::isWalkingGround(int gridX, int gridY) const
 			return false;
 		}
 		// Check if the tile is walkable (not blocked in WalkingGround layer)
-		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1);
+		bool isWalkable = (walkingLayer.getIntGridVal(gridX, gridY).value != -1); //A tile is considered walkable if its grid value is not -1 
 		// Check if there's an object at this grid position
-		bool hasObject = (getObjectAtGrid(gridX, gridY) != nullptr);
+		bool hasObject = (getObjectAtGrid(gridX, gridY) != nullptr); //A tile considered walkable if their isn't a object within the grid
 		std::cout << "Tile (" << gridX << "," << gridY << "): "
 			<< (isWalkable ? "Walkable" : "Blocked") << "\n";
 
@@ -491,10 +494,12 @@ void Level::updateCollision(float deltaTime)
 	//Deepseek solution
 	//Remove dead enemies
 	enemies.erase(std::remove_if(enemies.begin(), enemies.end(),
-		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}),
-		enemies.end());
+		//Lambda goes through Enemy vector to check if if enemy state is dead 
+		//Shifts non-dead enemies to the front of the vector
+		[](Enemy* enemy) { return enemy->getState() == Enemy::State::Dead;}), 
+		enemies.end()); //Returns an iterator to the new logical end of the container (the point after the last kept enemy)
 
-	enemiesCleared = enemies.empty();
+	enemiesCleared = enemies.empty(); //Removes dead enemies from memory
 #ifndef NDEBUG
 	if (enemiesCleared) { std::cout << "Enemies Cleared\n"; }
 #endif
